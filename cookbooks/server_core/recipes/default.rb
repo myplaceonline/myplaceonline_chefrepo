@@ -21,12 +21,24 @@ Chef::Log.info %{#{myplaceonline_logo}
   environment: #{node.chef_environment}
 }
 
+execute "info" do
+  command %{
+    echo "";
+    df -h | grep -v tmpfs;
+    echo "";
+    free -m;
+    echo "";
+    cat /proc/cpuinfo | grep -e processor -e MHz
+    echo "";
+  }
+end
+
 file "/etc/motd" do
   content myplaceonline_logo
 end
 
 execute "packages" do
-  command "dnf -y install python"
+  command "dnf -y install python multitail htop"
 end
 
 #package 'multitail'
