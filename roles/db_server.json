@@ -1,13 +1,16 @@
 {
-    "name": "example",
-    "description": "This is an example role defined as JSON",
+    "name": "db_server",
+    "description": "Database server",
     "chef_type": "role",
     "json_class": "Chef::Role",
     "default_attributes": {
     },
     "override_attributes": {
+      "system": {
+        "timezone": "UTC"
+      }
     },
     "run_list": [
-        "recipe[example]"
+        "recipe[bootstrap_server]"
     ]
 }
