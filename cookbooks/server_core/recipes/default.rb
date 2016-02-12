@@ -33,6 +33,11 @@ execute "info" do
   }
 end
 
+template "/etc/commonprofile.sh" do
+  source "commonprofile.sh"
+  mode "0755"
+end
+
 file "/etc/motd" do
   content myplaceonline_logo
 end
