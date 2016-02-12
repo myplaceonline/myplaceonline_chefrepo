@@ -58,17 +58,25 @@
       nginx['ssl_certificate_key'] = "/etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem"
     chef-server-ctl reconfigure
 
-# Install Cookbook from Chef Supermarket
+# Create Cookbook
 
-    knife cookbook site download $COOKBOOK
+    chef generate cookbook cookbooks/$COOKBOOK
 
-# Create Recipe
+# Save Cookbook
 
-    chef generate cookbook cookbooks/$RECIPE
+    # Update `version` in cookbooks/$COOKBOOK/metadata.rb
+    berks update -b cookbooks/$COOKBOOK/Berksfile
+    berks upload -b cookbooks/$COOKBOOK/Berksfile
 
-# Save Recipe
+# Add Chef Supermarket Dependency
 
-    knife cookbook upload $RECIPE
+    # https://supermarket.chef.io/
+    
+    # Edit cookbooks/$COOKBOOK/Berksfile
+    cookbook "$COOKBOOK"
+    
+    berks update -b cookbooks/$COOKBOOK/Berksfile
+    berks upload -b cookbooks/$COOKBOOK/Berksfile
 
 # Save Role
 
@@ -107,6 +115,10 @@
     knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
+# Run cookbooks on node
+
+    knife ssh "name:${NODE}" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
 
 # View Node JSON
 

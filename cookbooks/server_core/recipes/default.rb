@@ -25,4 +25,8 @@ file "/etc/motd" do
   content myplaceonline_logo
 end
 
-package 'multitail'
+execute "packages" do
+  command "dnf -y install python"
+end
+
+#package 'multitail'
