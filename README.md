@@ -119,9 +119,13 @@
 
     knife ssh "name:${NODE}" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
 
-# View Node JSON
+# View Node Info
 
     EDITOR=cat knife node edit $NODE
+
+# View Node JSON
+
+    EDITOR=cat knife node show -l $NODE
 
 # Delete Node
 

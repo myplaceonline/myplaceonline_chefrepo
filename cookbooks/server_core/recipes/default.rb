@@ -9,6 +9,8 @@ myplaceonline_logo = %q{
             |___/|_|                                                
 } + "\n\n"
 
+ENV["TZ"] = "UTC"
+
 Chef::Log.info %{#{myplaceonline_logo}
   OS: #{node["kernel"]["name"]} #{node["kernel"]["release"]}
       #{node["os"]} #{node["platform"]} #{node["platform_version"]}
@@ -38,12 +40,28 @@ template "/etc/commonprofile.sh" do
   mode "0755"
 end
 
+ruby_block "add login profile script" do
+  block do
+    fe = Chef::Util::FileEdit.new("/etc/profile")
+    fe.insert_line_if_no_match(/commonprofile/, "source /etc/commonprofile.sh")
+    fe.write_file
+  end
+end
+
 file "/etc/motd" do
   content myplaceonline_logo
 end
 
-execute "packages" do
-  command "dnf -y install python multitail htop"
+execute "commands" do
+  command %{
+    ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
+    dnf -y install python python-dnf multitail htop;
+  }
 end
 
-#package 'multitail'
+template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
+  source "dnf-query.py"
+  mode "0755"
+end
+
+package %w{multitail strace htop}
