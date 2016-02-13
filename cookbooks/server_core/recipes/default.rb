@@ -52,10 +52,19 @@ file "/etc/motd" do
   content myplaceonline_logo
 end
 
+ruby_block "update sysctl" do
+  block do
+    fe = Chef::Util::FileEdit.new("/etc/sysctl.conf")
+    fe.insert_line_if_no_match(/swappiness/, "vm.swappiness=0")
+    fe.write_file
+  end
+end
+
 execute "commands" do
   command %{
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
     dnf -y install python python-dnf multitail htop;
+    sysctl -p;
   }
 end
 
@@ -65,3 +74,16 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
 end
 
 package %w{multitail strace htop}
+
+directory "/root/.ssh/" do
+  mode "0700"
+end
+
+file "/root/.ssh/authorized_keys" do
+  mode "0700"
+end
+
+swap_file '/swap1' do
+  # size in MBs
+  size data_bag_item("server_core", "server")["swap1"]
+end

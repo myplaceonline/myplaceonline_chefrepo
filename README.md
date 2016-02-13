@@ -135,3 +135,12 @@
 # Find all nodes of a particular role and environment
 
     knife search "role:db_server AND chef_environment:production"
+
+# Create data bag
+
+    knife data bag create $DATABAG
+
+# Save data bag
+
+    knife data bag from file $DATABAG $DATABAG.json
+
