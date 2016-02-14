@@ -1,0 +1,5 @@
+{
+  "id": "server",
+  "swap1": 1024,
+  "secrets_dir": "/etc/myplaceonline/"
+}

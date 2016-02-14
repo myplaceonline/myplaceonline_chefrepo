@@ -1,3 +1,5 @@
+secret_key_databag*
+
 # Chef
 .chef/*.pem
 .chef/encrypted_data_bag_secret

@@ -93,7 +93,7 @@ end
 
 swap_file '/swap1' do
   # size in MBs
-  size data_bag_item("server_core", "server")["swap1"]
+  size data_bag_item("server", "server")["swap1"]
 end
 
 execute "update" do

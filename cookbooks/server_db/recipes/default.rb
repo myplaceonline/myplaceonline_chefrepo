@@ -25,3 +25,8 @@ template "/var/lib/pgsql/data/postgresql.conf" do
   source "postgresql.conf.erb"
   notifies :restart, "service[postgresql]"
 end
+
+execute "create-postgres-myplaceonline-user" do
+  command "sudo -i -u postgres psql -c \"CREATE ROLE myplaceonline WITH LOGIN ENCRYPTED PASSWORD '#{data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]}' CREATEDB;\""
+  not_if { `sudo -i -u postgres psql -tAc \"SELECT * FROM pg_roles WHERE rolname='myplaceonline'\" | wc -l`.chomp == "1" }
+end

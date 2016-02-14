@@ -108,12 +108,15 @@
     # https://cloud.digitalocean.com/domains/myplaceonline.com
     # Create DNS entry for $NAME with floating IP, and $NAME-internal with eth1 IP
     
-    # Bootstrap with a blank recipe because `knife bootstrap` doesn't support
+    # Bootstrap with a minimal recipe because `knife bootstrap` doesn't support
     # `--force-logger` so we wouldn't have good logging. Then run `knife ssh`
     # to set and run the "real" run_list.
     
     knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     
+    # Upload required secret keys
+    scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
+
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
 # Add cookbook to node
@@ -145,6 +148,17 @@
 
     knife data bag create $DATABAG
 
+# Create encrypted data bag
+
+    DATABAG=...
+    export EDITOR=vi
+    openssl rand -base64 512 | tr -d '\r\n' > secret_key_databag_$DATABAG
+    knife data bag create $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
+
 # Save data bag
 
     knife data bag from file $DATABAG $DATABAG.json
+
+# Show encrypted data bag
+
+    knife data bag show $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
