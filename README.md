@@ -61,6 +61,7 @@
 # Create Cookbook
 
     chef generate cookbook cookbooks/$COOKBOOK
+    berks install -b cookbooks/$COOKBOOK/Berksfile
 
 # Save Cookbook
 
@@ -113,7 +114,11 @@
     
     knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     
-    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
+# Add cookbook to node
+
+    knife node run_list add $NODE recipe[server_db]
 
 # Run cookbooks on node
 

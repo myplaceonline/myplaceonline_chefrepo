@@ -1,4 +1,4 @@
-# hello_chef_server
+# server_db
 
 TODO: Enter the cookbook description here.
 

@@ -1,12 +1,12 @@
 #
-# Cookbook Name:: hello_chef_server
+# Cookbook Name:: server_db
 # Spec:: default
 #
 # Copyright (c) 2016 The Authors, All Rights Reserved.
 
 require 'spec_helper'
 
-describe 'hello_chef_server::default' do
+describe 'server_db::default' do
   context 'When all attributes are default, on an unspecified platform' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new

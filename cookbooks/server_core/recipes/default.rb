@@ -63,8 +63,9 @@ end
 execute "commands" do
   command %{
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
-    dnf -y install python python-dnf multitail htop;
     sysctl -p;
+    dnf -y install python python-dnf multitail htop;
+    dnf -y --enablerepo fedora-debuginfo --enablerepo updates-debuginfo install kernel-debuginfo-common-x86_64 kernel-debuginfo glibc-debuginfo-common glibc-debuginfo systemtap perf;
   }
 end
 

@@ -17,5 +17,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[hello_chef_server::default]
+      - recipe[server_db::default]
     attributes:
