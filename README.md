@@ -130,7 +130,7 @@
 
 # View Node JSON
 
-    EDITOR=cat knife node show -l $NODE
+    knife node show -l $NODE
 
 # Delete Node
 
@@ -148,4 +148,3 @@
 # Save data bag
 
     knife data bag from file $DATABAG $DATABAG.json
-

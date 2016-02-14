@@ -4,3 +4,4 @@ metadata
 
 cookbook "dnf"
 cookbook "swap"
+cookbook "selinux"
