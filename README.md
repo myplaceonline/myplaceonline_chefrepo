@@ -105,7 +105,7 @@
     # `--force-logger` so we wouldn't have good logging. Then run `knife ssh`
     # to set and run the "real" run_list.
     
-    knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
+    knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     
     # Upload required secret keys
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
@@ -118,7 +118,7 @@
     # Create Server (see above): db1.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.115.9
     NODE=db1
     ROLE=db_server
-    knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
+    knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
