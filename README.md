@@ -32,23 +32,16 @@
     chef-server-ctl install opscode-reporting
     chef-server-ctl reconfigure
     opscode-reporting-ctl reconfigure
-    vi /etc/postfix/sasl_passwd
-      [smtp.mandrillapp.com] root@myplaceonline.com:API_KEY
-    chmod 600 /etc/postfix/sasl_passwd
-    postmap /etc/postfix/sasl_passwd
     vi /etc/postfix/main.cf
-      smtp_sasl_auth_enable = yes
-      smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd 
-      smtp_sasl_security_options = noanonymous
-      smtp_use_tls = yes
-      relayhost = [smtp.mandrillapp.com]
+      smtp_sasl_auth_enable = yes 
+      smtp_sasl_password_maps = static:myplaceonline:$PASSWORD
+      smtp_sasl_security_options = noanonymous 
+      smtp_tls_security_level = encrypt
+      header_size_limit = 4096000
+      relayhost = [smtp.sendgrid.net]:587
     systemctl start postfix.service
     systemctl enable postfix.service
-    sendmail RECIPIENT@domain.com
-      From: you@yourdomain.com
-      Subject: Testing from Postfix
-      This is a test email
-      .
+    echo "This is the message body" | mail -s "This is the subject" -r root@myplaceonline.com kevgrig@gmail.com
     chef-server-ctl user-create root root root root@myplaceonline.com ADMIN_PASSWORD --filename root.pem
     chef-server-ctl org-create myplaceonline "myplaceonline" --association_user root
     chef-server-ctl stop nginx
@@ -88,19 +81,19 @@
 
 # Create Server
 
+    # https://cloud.digitalocean.com/droplets/new
+    # Region: San Francisco
+    # Private Networking
+    # IPV6
+    # Select SSH Key
+    # Hostname: $NODE.myplaceonline.com
+    
     # Bare hostname (e.g. db1):
     NODE=X
     
     # Choose one:
     ROLE=[db_server|web_server]
     ENVIRONMENT=[production|test]
-    
-    # https://cloud.digitalocean.com/droplets/new
-    # Region: San Francisco
-    # Private Networking
-    # Backups
-    # IPV6
-    # Hostname: $NODE.myplaceonline.com
     
     # https://cloud.digitalocean.com/networking
     # Create floating IP
@@ -118,6 +111,20 @@
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
 
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
+# Recreate Production
+
+    ENVIRONMENT=production
+    # Create Server (see above): db1.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.115.9
+    NODE=db1
+    ROLE=db_server
+    knife bootstrap ${NODE}.myplaceonline.com --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
+    scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
+# List nodes
+
+    knife search "chef_environment:production"
 
 # Add cookbook to node
 
@@ -137,8 +144,8 @@
 
 # Delete Node
 
-    knife node delete $NODE
-    knife client delete $NODE
+    knife node delete -y $NODE
+    knife client delete -y $NODE
 
 # Find all nodes of a particular role and environment
 
@@ -148,6 +155,10 @@
 
     knife data bag create $DATABAG
 
+# Save data bag
+
+    knife data bag from file $DATABAG $DATABAG.json
+
 # Create encrypted data bag
 
     DATABAG=...
@@ -155,10 +166,12 @@
     openssl rand -base64 512 | tr -d '\r\n' > secret_key_databag_$DATABAG
     knife data bag create $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
 
-# Save data bag
-
-    knife data bag from file $DATABAG $DATABAG.json
-
 # Show encrypted data bag
 
+    DATABAG=globalsecrets
     knife data bag show $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
+
+# Edit encrypted data bag
+
+    DATABAG=globalsecrets
+    knife data bag edit $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG

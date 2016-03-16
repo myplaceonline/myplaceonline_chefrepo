@@ -1,9 +1,3 @@
-#
-# Cookbook Name:: server_db
-# Recipe:: default
-#
-# Copyright (c) 2016 The Authors, All Rights Reserved.
-
 # https://fedoraproject.org/wiki/PostgreSQL
 package %w{postgresql-server postgresql-contrib}
 

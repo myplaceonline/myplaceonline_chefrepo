@@ -11,6 +11,6 @@
       }
     },
     "run_list": [
-        "recipe[bootstrap_server]"
+      "recipe[bootstrap_server]"
     ]
 }
