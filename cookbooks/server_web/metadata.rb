@@ -4,4 +4,7 @@ maintainer_email 'root@myplaceonline.com'
 license 'all_rights'
 description 'Installs/Configures server_web'
 long_description 'Installs/Configures server_web'
-version '0.1.3'
+version '0.1.7'
+
+depends 'git'
+depends 'rvm'

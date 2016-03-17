@@ -59,6 +59,7 @@
 # Save Cookbook
 
     # Update `version` in cookbooks/$COOKBOOK/metadata.rb
+    berks install -b cookbooks/$COOKBOOK/Berksfile
     berks update -b cookbooks/$COOKBOOK/Berksfile && berks upload -b cookbooks/$COOKBOOK/Berksfile
 
 # Add Chef Supermarket Dependency
@@ -68,8 +69,7 @@
     # Edit cookbooks/$COOKBOOK/Berksfile
     cookbook "$COOKBOOK"
     
-    berks update -b cookbooks/$COOKBOOK/Berksfile
-    berks upload -b cookbooks/$COOKBOOK/Berksfile
+    berks update -b cookbooks/$COOKBOOK/Berksfile && berks upload -b cookbooks/$COOKBOOK/Berksfile
 
 # Save Role
 
