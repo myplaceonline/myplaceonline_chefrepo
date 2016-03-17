@@ -1,3 +1,5 @@
+output_file = "/tmp/output"
+
 package %w{gnupg ImageMagick ImageMagick-c++ ImageMagick-c++-devel ImageMagick-devel ImageMagick-libs golang git ruby rubygems ruby-devel redhat-rpm-config gcc gcc-c++ openssl-devel postgresql-devel postgresql nodejs}
 
 group "webgrp" do
@@ -50,4 +52,29 @@ execute "initialize-setup" do
   command "bin/bundle exec rake db:drop db:create db:schema:load db:seed"
   environment ({"RAILS_ENV" => node.chef_environment, "SECRET_KEY_BASE" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"] })
   not_if { `psql -tA -U #{node.db.dbuser} -h #{node.db.host} -d #{node.db.dbname} -c \"\\dt\" | grep -c \"No relations found.\"`.chomp == "0" }
+end
+
+execute "migrate db" do
+  cwd "#{node.web.dir}/"
+  command "bin/bundle exec rake db:migrate &> #{output_file}"
+  environment ({
+    "RAILS_ENV" => node.chef_environment,
+    "SECRET_KEY_BASE" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
+    "ROOT_EMAIL" => node.app.root_email,
+    "ROOT_PASSWORD" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"]
+  })
+end
+
+ruby_block "migrate db results" do
+  only_if { ::File.exists?(output_file) }
+  block do
+    print "\n"
+    print File.read(output_file)
+  end
+end
+
+execute "precompile assets" do
+  cwd "#{node.web.dir}/"
+  command "bin/bundle exec rake assets:precompile"
+  environment ({"RAILS_ENV" => node.chef_environment})
 end

@@ -8,6 +8,9 @@
       "host": "db1-internal.myplaceonline.com",
       "dbname": "myplaceonline_production",
       "dbuser": "myplaceonline"
+    },
+    "app": {
+      "root_email": "root@myplaceonline.com"
     }
   },
   "override_attributes": {
