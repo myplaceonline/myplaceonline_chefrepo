@@ -77,6 +77,7 @@
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
 # "local" is for Unix domain socket connections only
+local   all             <%= node.db.dbuser %>                                     md5
 local   all             all                                     peer
 # IPv4 local connections:
 #host    all             all             127.0.0.1/32            ident
@@ -88,4 +89,4 @@ local   all             all                                     peer
 #host    replication     postgres        127.0.0.1/32            ident
 #host    replication     postgres        ::1/128                 ident
 
-host    all             all             <%= node['network']['interfaces']['eth1']['addresses'].select { |address, data| data['family'] == 'inet' }.keys[0] %>/32            md5
+host    all             <%= node.db.dbuser %>             samenet            md5

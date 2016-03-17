@@ -10,9 +10,12 @@ service "postgresql" do
   action [:enable, :start]
 end
 
+#web_servers = search(:node, "role:web_server")
+
 template "/var/lib/pgsql/data/pg_hba.conf" do
   source "pg_hba.conf.erb"
   notifies :restart, "service[postgresql]"
+  #variables :web_servers => web_servers
 end
 
 template "/var/lib/pgsql/data/postgresql.conf" do
@@ -21,6 +24,11 @@ template "/var/lib/pgsql/data/postgresql.conf" do
 end
 
 execute "create-postgres-myplaceonline-user" do
-  command "sudo -i -u postgres psql -c \"CREATE ROLE myplaceonline WITH LOGIN ENCRYPTED PASSWORD '#{data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]}' CREATEDB;\""
-  not_if { `sudo -i -u postgres psql -tAc \"SELECT * FROM pg_roles WHERE rolname='myplaceonline'\" | wc -l`.chomp == "1" }
+  command "sudo -i -u postgres psql -c \"CREATE ROLE #{node.db.dbuser} WITH LOGIN ENCRYPTED PASSWORD '#{data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]}' SUPERUSER;\""
+  not_if { `sudo -i -u postgres psql -tAc \"SELECT * FROM pg_roles WHERE rolname='#{node.db.dbuser}'\" | wc -l`.chomp == "1" }
+end
+
+execute "create-postgres-myplaceonline-db" do
+  command "sudo -i -u postgres psql -c \"CREATE DATABASE #{node.db.dbname} WITH OWNER #{node.db.dbuser};\""
+  not_if { `sudo -i -u postgres psql -tAc \"SELECT datname FROM pg_database WHERE datname = '#{node.db.dbname}' and datistemplate = false;\" | wc -l`.chomp == "1" }
 end

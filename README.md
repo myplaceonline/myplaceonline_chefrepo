@@ -181,4 +181,3 @@
     export EDITOR=vi
     DATABAG=globalsecrets
     knife data bag edit $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
-

@@ -1,4 +1,4 @@
-package %w{gnupg ImageMagick ImageMagick-c++ ImageMagick-c++-devel ImageMagick-devel ImageMagick-libs golang git ruby rubygems ruby-devel redhat-rpm-config gcc gcc-c++ openssl-devel postgresql-devel}
+package %w{gnupg ImageMagick ImageMagick-c++ ImageMagick-c++-devel ImageMagick-devel ImageMagick-libs golang git ruby rubygems ruby-devel redhat-rpm-config gcc gcc-c++ openssl-devel postgresql-devel postgresql nodejs}
 
 group "webgrp" do
   members "root"
@@ -37,4 +37,17 @@ end
 execute "bundle install" do
   cwd "#{node.web.dir}/"
   command "bin/bundle install --deployment"
+end
+
+template "/root/.pgpass" do
+  source "pgpass.erb"
+  mode "0700"
+  variables :postgres_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]
+end
+
+execute "initialize-setup" do
+  cwd "#{node.web.dir}/"
+  command "bin/bundle exec rake db:drop db:create db:schema:load db:seed"
+  environment ({"RAILS_ENV" => node.chef_environment, "SECRET_KEY_BASE" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"] })
+  not_if { `psql -tA -U #{node.db.dbuser} -h #{node.db.host} -d #{node.db.dbname} -c \"\\dt\" | grep -c \"No relations found.\"`.chomp == "0" }
 end
