@@ -97,9 +97,10 @@
     
     # https://cloud.digitalocean.com/networking
     # Create floating IP
+    # Create DNS A entry for $NAME with floating IP
     # ssh root@$NODE.myplaceonline.com "ifconfig eth1" | grep "inet "
     # https://cloud.digitalocean.com/domains/myplaceonline.com
-    # Create DNS entry for $NAME with floating IP, and $NAME-internal with eth1 IP
+    # Create DNS A entry for $NAME-internal with eth1 IP
     
     # Bootstrap with a minimal recipe because `knife bootstrap` doesn't support
     # `--force-logger` so we wouldn't have good logging. Then run `knife ssh`
@@ -114,8 +115,14 @@
 
 # Recreate Production
 
-    # Create Server (see above): db1.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.115.9
+    # Create Server (see previous section): db1.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.115.9
     ENVIRONMENT=production; NODE=db1; ROLE=db_server
+    knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
+    scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
+    # Create Server (see previous section): web1.myplaceonline.com, Fedora, 1GB, San Francisco, 45.55.115.198
+    ENVIRONMENT=production; NODE=web1; ROLE=web_server
     knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
@@ -171,5 +178,7 @@
 
 # Edit encrypted data bag
 
+    export EDITOR=vi
     DATABAG=globalsecrets
     knife data bag edit $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
+

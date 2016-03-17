@@ -1,0 +1,6 @@
+[SSLMate]
+name=SSLMate repository
+baseurl=https://packages.sslmate.com/fedora/$releasever/main/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://sslmate.com/yum/centos/RPM-GPG-KEY-SSLMate

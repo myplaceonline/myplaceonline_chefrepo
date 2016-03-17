@@ -67,7 +67,7 @@ template "/etc/sysctl.conf" do
   notifies :run, 'execute[reload-sysctl]', :immediately
 end
 
-execute "commands" do
+execute "commands1" do
   command %{
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
     dnf -y install python python-dnf multitail htop;

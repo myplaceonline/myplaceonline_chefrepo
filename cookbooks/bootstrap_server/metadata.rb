@@ -1,6 +1,6 @@
 name 'bootstrap_server'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
+maintainer 'Myplaceonline'
+maintainer_email 'root@myplaceonline.com'
 license 'all_rights'
 description 'Installs/Configures bootstrap_server'
 long_description 'Installs/Configures bootstrap_server'
