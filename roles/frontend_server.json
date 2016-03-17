@@ -1,0 +1,17 @@
+{
+    "name": "frontend_server",
+    "description": "Frontend server",
+    "chef_type": "role",
+    "json_class": "Chef::Role",
+    "default_attributes": {
+    },
+    "override_attributes": {
+      "system": {
+        "timezone": "UTC"
+      }
+    },
+    "run_list": [
+      "recipe[server_core]",
+      "recipe[server_frontend]"
+    ]
+}
