@@ -1,0 +1,8 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: <%= node.db.host %>
+  database: <%= node.db.dbname %>
+  username: <%= node.db.dbuser %>
+  password: <%= @postgres_password %>

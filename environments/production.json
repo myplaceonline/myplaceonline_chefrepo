@@ -1,13 +1,17 @@
 {
-    "name": "production",
-    "description": "Production",
-    "chef_type": "environment",
-    "json_class": "Chef::Environment",
-    "default_attributes": {
-    },
-    "override_attributes": {
-    },
-    "cookbook_versions": {
-        "example": "= 1.0.0"
+  "name": "production",
+  "description": "Production",
+  "chef_type": "environment",
+  "json_class": "Chef::Environment",
+  "default_attributes": {
+    "db": {
+      "host": "db1-internal.myplaceonline.com",
+      "dbname": "myplaceonline_production",
+      "dbuser": "myplaceonline"
     }
+  },
+  "override_attributes": {
+  },
+  "cookbook_versions": {
+  }
 }
