@@ -5,14 +5,24 @@ directory "#{data_bag_item("server", "server")["secrets_dir"]}" do
   mode "0700"
 end
 
+execute "commands1" do
+  command "setenforce Permissive"
+end
+
+execute "commands2" do
+  command "dnf -y install at"
+end
+
+execute "commands3" do
+  command "dnf -y update"
+end
+
 # Could've used shutdown with +1 but it was broken at time of writing
 # (https://github.com/systemd/systemd/issues/1120)
-execute "commands" do
-  command %{
-    setenforce Permissive && \
-    dnf -y install at && \
-    dnf -y --setopt=deltarpm=false update && \
-    echo "reboot" | at now + 1 minutes && \
-    echo "Please wait 2 minutes while the server reboots..."
-  }
+execute "commands4" do
+  command "echo \"reboot\" | at now + 1 minutes"
+end
+
+execute "commands5" do
+  command "echo \"Please wait 2 minutes while the server reboots...\""
 end
