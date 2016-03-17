@@ -110,17 +110,15 @@
     # Upload required secret keys
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
 
-    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
 # Recreate Production
 
-    ENVIRONMENT=production
     # Create Server (see above): db1.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.115.9
-    NODE=db1
-    ROLE=db_server
+    ENVIRONMENT=production; NODE=db1; ROLE=db_server
     knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT}
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
-    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}],recipe[server_core],recipe[server_db]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
 # List nodes
 

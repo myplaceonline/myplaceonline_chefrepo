@@ -13,16 +13,25 @@ execute "commands2" do
   command "dnf -y install at"
 end
 
-execute "commands3" do
+execute "commands4" do
+  command "systemctl enable atd.service"
+end
+
+execute "commands5" do
+  command "systemctl start atd.service"
+end
+
+execute "commands6" do
   command "dnf -y update"
+  returns [0,1] # Cannot reproduce return code 1 when run manually, but it seems okay
 end
 
 # Could've used shutdown with +1 but it was broken at time of writing
 # (https://github.com/systemd/systemd/issues/1120)
-execute "commands4" do
+execute "commands7" do
   command "echo \"reboot\" | at now + 1 minutes"
 end
 
-execute "commands5" do
+execute "commands8" do
   command "echo \"Please wait 2 minutes while the server reboots...\""
 end
