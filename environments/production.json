@@ -10,7 +10,13 @@
       "dbuser": "myplaceonline"
     },
     "app": {
-      "root_email": "root@myplaceonline.com"
+      "name": "myplaceonline",
+      "server_name": "myplaceonline.com",
+      "server_protocol": "https",
+      "smtp_user": "myplaceonline",
+      "mail_from": "contact@myplaceonline.com",
+      "root_email": "root@myplaceonline.com",
+      "tmpdir": "/var/tmp/"
     },
     "nginx": {
       "default_site_enabled": false,

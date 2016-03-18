@@ -2,10 +2,6 @@ output_file = "/tmp/output"
 
 package %w{gnupg ImageMagick ImageMagick-c++ ImageMagick-c++-devel ImageMagick-devel ImageMagick-libs golang git ruby rubygems ruby-devel redhat-rpm-config gcc gcc-c++ openssl-devel postgresql-devel postgresql nodejs}
 
-service "nginx" do
-  action "stop"
-end
-
 group "webgrp" do
   members "root"
 end
@@ -14,6 +10,21 @@ directory "#{node.web.dir}" do
   mode "0750"
   group "webgrp"
   recursive true
+end
+
+template "#{node.nginx.dir}/sites-available/#{node.app.name}.conf" do
+  source "nginx.conf.erb"
+  mode "0644"
+  variables({
+    :devise_secret => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
+    :root_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
+    :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
+    :yelp => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["yelp"],
+  })
+end
+
+service "nginx" do
+  action "stop"
 end
 
 git "#{node.web.dir}" do
