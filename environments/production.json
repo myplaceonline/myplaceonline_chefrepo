@@ -11,6 +11,29 @@
     },
     "app": {
       "root_email": "root@myplaceonline.com"
+    },
+    "nginx": {
+      "default_site_enabled": false,
+      "passenger": {
+        "version": "5.0.26",
+        "gem_binary": "/usr/bin/gem",
+        "ruby": "/usr/bin/ruby",
+        "root": "/usr/local/share/gems/gems/passenger-5.0.26/"
+      },
+      "gzip_static": "yes",
+      "source": {
+        "version": "1.9.12",
+        "checksum": "1af2eb956910ed4b11aaf525a81bc37e135907e7127948f9179f5410337da042",
+        "_comment": "wget http://nginx.org/download/nginx-1.9.12.tar.gz; sha256sum nginx-1.9.12.tar.gz;",
+        "use_existing_user": true,
+        "modules": [
+          "nginx::ipv6",
+          "nginx::http_ssl_module",
+          "nginx::http_gzip_static_module",
+          "nginx::passenger",
+          "nginx::upload_progress_module"
+        ]
+      }
     }
   },
   "override_attributes": {

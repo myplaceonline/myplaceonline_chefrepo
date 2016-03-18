@@ -80,7 +80,7 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
   mode "0755"
 end
 
-package %w{multitail strace htop mtr traceroute}
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb}
 
 directory "/root/.ssh/" do
   mode "0700"
