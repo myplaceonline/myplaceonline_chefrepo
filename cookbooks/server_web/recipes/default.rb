@@ -98,3 +98,11 @@ execute "precompile assets" do
   command "bin/bundle exec rake assets:precompile"
   environment ({"RAILS_ENV" => node.chef_environment})
 end
+
+nginx_site "#{node.app.name}.conf" do
+  enable true
+end
+
+service "nginx" do
+  action "start"
+end
