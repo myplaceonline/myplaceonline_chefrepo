@@ -12,17 +12,17 @@ server {
 
   passenger_enabled on;
   <%# Envars may need to be added to crontab.erb %>
-  passenger_set_cgi_param RAILS_ENV <%= node.chef_environment %>;
-  passenger_set_cgi_param SECRET_KEY_BASE <%= @devise_secret %>;
-  passenger_set_cgi_param WEB_DOMAIN <%= node.app.server_name %>;
-  passenger_set_cgi_param WEB_PROTOCOL <%= node.app.server_protocol %>;
-  passenger_set_cgi_param SMTP_USER <%= node.app.smtp_user %>;
-  passenger_set_cgi_param SMTP_PASSWORD <%= @smtp_password %>;
-  passenger_set_cgi_param MAIL_FROM <%= node.app.mail_from %>;
-  passenger_set_cgi_param YELP_CONSUMER_KEY <%= @yelp['consumer_key'] %>;
-  passenger_set_cgi_param YELP_CONSUMER_SECRET <%= @yelp['consumer_secret'] %>;
-  passenger_set_cgi_param YELP_TOKEN <%= @yelp['token'] %>;
-  passenger_set_cgi_param YELP_TOKEN_SECRET <%= @yelp['token_secret'] %>;
-  passenger_set_cgi_param ROOT_EMAIL <%= node.app.root_email %>;
-  passenger_set_cgi_param ROOT_PASSWORD <%= @root_password %>;
+  passenger_env_var RAILS_ENV <%= node.chef_environment %>;
+  passenger_env_var SECRET_KEY_BASE <%= @devise_secret %>;
+  passenger_env_var WEB_DOMAIN <%= node.app.server_name %>;
+  passenger_env_var WEB_PROTOCOL <%= node.app.server_protocol %>;
+  passenger_env_var SMTP_USER <%= node.app.smtp_user %>;
+  passenger_env_var SMTP_PASSWORD <%= @smtp_password %>;
+  passenger_env_var MAIL_FROM <%= node.app.mail_from %>;
+  passenger_env_var YELP_CONSUMER_KEY <%= @yelp['consumer_key'] %>;
+  passenger_env_var YELP_CONSUMER_SECRET <%= @yelp['consumer_secret'] %>;
+  passenger_env_var YELP_TOKEN <%= @yelp['token'] %>;
+  passenger_env_var YELP_TOKEN_SECRET <%= @yelp['token_secret'] %>;
+  passenger_env_var ROOT_EMAIL <%= node.app.root_email %>;
+  passenger_env_var ROOT_PASSWORD <%= @root_password %>;
 }
