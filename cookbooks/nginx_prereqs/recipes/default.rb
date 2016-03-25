@@ -18,3 +18,7 @@ execute "symlink" do
   action :nothing
   subscribes :run, "gem_package[passenger]", :immediate
 end
+
+if !File.exist?("/opt/nginx-#{node.nginx.source.version}/sbin/nginx")
+  include_recipe "nginx::source"
+end
