@@ -32,10 +32,15 @@ git "#{node.web.dir}" do
   action :sync
 end
 
+directory "#{node.web.dir}" do
+  mode '0755'
+end
+
 template "#{node.web.dir}/config/database.yml" do
   source "database.yml.erb"
-  mode "0750"
+  mode "0700"
   variables :postgres_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]
+  owner "nobody" # database.yml is read within the context of Passenger, not nginx
 end
 
 directory "#{node.web.dir}/log/" do

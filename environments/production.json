@@ -19,6 +19,7 @@
       "tmpdir": "/var/tmp/"
     },
     "nginx": {
+      "user": "nginx",
       "default_site_enabled": false,
       "gzip_static": "on",
       "passenger": {
