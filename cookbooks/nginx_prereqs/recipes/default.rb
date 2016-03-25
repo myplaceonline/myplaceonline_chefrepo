@@ -1,4 +1,4 @@
-package %w{nginx ruby rubygems ruby-devel}
+package %w{nginx ruby rubygems ruby-devel redhat-rpm-config}
 
 execute "reload-systemd" do
   command "systemctl daemon-reload"
@@ -10,11 +10,11 @@ template "/usr/lib/systemd/system/nginx.service" do
   notifies :run, "execute[reload-systemd]", :immediately
 end
 
-directory "#{node.nginx.passenger.root}ext/" do
-  mode '0755'
-  recursive true
-end
-
 execute "symlink" do
-  command "ln -s #{node.nginx.passenger.root}src/nginx_module #{node.nginx.passenger.root}ext/nginx"
+  command %{
+    mkdir #{node.nginx.passenger.root}ext;
+    ln -s #{node.nginx.passenger.root}src/nginx_module #{node.nginx.passenger.root}ext/nginx
+  }
+  action :nothing
+  subscribes :run, "gem_package[passenger]", :immediate
 end

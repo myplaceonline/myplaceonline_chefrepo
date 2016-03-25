@@ -21,6 +21,10 @@
     "nginx": {
       "default_site_enabled": false,
       "gzip_static": "on",
+      "_comment": "The configure flags are only for nginx not passenger",
+      "configure_flags": [
+        "--with-cc-opt='-Wno-unused-variable'"
+      ],
       "passenger": {
         "install_method": "source",
         "version": "5.0.26",
