@@ -56,18 +56,47 @@ end
 
 directory "/var/lib/pgsql/.ssh/" do
   mode "0700"
+  owner "postgres"
+  group "postgres"
 end
 
 file "/var/lib/pgsql/.ssh/authorized_keys" do
   action :create_if_missing
   content node["keys"]["postgresql"]["public"]
   mode "0700"
+  owner "postgres"
+  group "postgres"
 end
 
-file "/var/lib/pgsql/.ssh/postgresql" do
+file "/var/lib/pgsql/.ssh/id_rsa" do
   action :create_if_missing
   content data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["keys"]["postgresql"]["private"]
   mode "0700"
+  owner "postgres"
+  group "postgres"
+end
+
+search(:node, "chef_environment:#{node.chef_environment} AND role:db_server*").each do |dbserver|
+  if dbserver.name != node.name
+    target = dbserver["fqdn"]
+    target = target.insert(target.index('.'), "-internal")
+    
+    log "server info" do
+      message %{
+        Processing #{dbserver["fqdn"]}
+      }
+      level :info
+    end
+    
+    execute "trust host" do
+      command %{
+        touch /var/lib/pgsql/.ssh/known_hosts;
+        ssh-keyscan -t rsa,dsa #{target} 2>&1 | sort -u - /var/lib/pgsql/.ssh/known_hosts > /var/lib/pgsql/.ssh/tmp_hosts;
+        mv /var/lib/pgsql/.ssh/tmp_hosts /var/lib/pgsql/.ssh/known_hosts;
+      }
+      user "postgres"
+    end
+  end
 end
 
 if !File.exist?("/usr/pgsql-#{node.postgresql.version}/bin/repmgr")
