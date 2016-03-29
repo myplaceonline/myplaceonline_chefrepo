@@ -120,6 +120,12 @@
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
+    # Create Server (see previous section): db2.myplaceonline.com, Fedora, 2GB, San Francisco, 45.55.113.250
+    ENVIRONMENT=production; NODE=db2; ROLE=db_server_backup
+    knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT} && sleep 120
+    scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
+    knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
+
     # Create Server (see previous section): web1.myplaceonline.com, Fedora, 1GB, San Francisco, 45.55.115.198
     ENVIRONMENT=production; NODE=web1; ROLE=web_server
     knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT} && sleep 120

@@ -3,9 +3,10 @@
 # repmgr can't be built until Fedora 24 due to https://bugzilla.redhat.com/show_bug.cgi?id=784281
 # so we use PGDG
 
-execute "postgres repo" do
-  command "dnf install -y https://download.postgresql.org/pub/repos/yum/9.5/fedora/fedora-23-x86_64/pgdg-fedora95-9.5-3.noarch.rpm"
-  only_if { `ls -l /etc/yum.repos.d/*pgdg*repo`.chomp == "0" }
+if !File.exist?("/etc/yum.repos.d/pgdg-95-fedora.repo")
+  execute "postgres repo" do
+    command "dnf install -y https://download.postgresql.org/pub/repos/yum/9.5/fedora/fedora-23-x86_64/pgdg-fedora95-9.5-3.noarch.rpm"
+  end
 end
 
 execute "postgres install" do
@@ -34,14 +35,23 @@ template "/var/lib/pgsql/#{node.postgresql.version}/data/postgresql.conf" do
   notifies :restart, "service[postgresql-#{node.postgresql.version}]"
 end
 
-execute "create-postgres-myplaceonline-user" do
-  command "sudo -i -u postgres psql -c \"CREATE ROLE #{node.db.dbuser} WITH LOGIN ENCRYPTED PASSWORD '#{data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]}' SUPERUSER;\""
-  not_if { `sudo -i -u postgres psql -tAc \"SELECT * FROM pg_roles WHERE rolname='#{node.db.dbuser}'\" | wc -l`.chomp == "1" }
+log "check master" do
+  message %{
+    postgresql master = #{node.postgresql.master}
+  }
+  level :info
 end
 
-execute "create-postgres-myplaceonline-db" do
-  command "sudo -i -u postgres psql -c \"CREATE DATABASE #{node.db.dbname} WITH OWNER #{node.db.dbuser};\""
-  not_if { `sudo -i -u postgres psql -tAc \"SELECT datname FROM pg_database WHERE datname = '#{node.db.dbname}' and datistemplate = false;\" | wc -l`.chomp == "1" }
+if node.postgresql.master
+  execute "create-postgres-myplaceonline-user" do
+    command "sudo -i -u postgres psql -c \"CREATE ROLE #{node.db.dbuser} WITH LOGIN ENCRYPTED PASSWORD '#{data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["postgresql"]["myplaceonline"]}' SUPERUSER;\""
+    not_if { `sudo -i -u postgres psql -tAc \"SELECT * FROM pg_roles WHERE rolname='#{node.db.dbuser}'\" | wc -l`.chomp == "1" }
+  end
+
+  execute "create-postgres-myplaceonline-db" do
+    command "sudo -i -u postgres psql -c \"CREATE DATABASE #{node.db.dbname} WITH OWNER #{node.db.dbuser};\""
+    not_if { `sudo -i -u postgres psql -tAc \"SELECT datname FROM pg_database WHERE datname = '#{node.db.dbname}' and datistemplate = false;\" | wc -l`.chomp == "1" }
+  end
 end
 
 directory "/var/lib/pgsql/.ssh/" do

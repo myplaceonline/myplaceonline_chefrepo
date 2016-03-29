@@ -1,6 +1,6 @@
 {
-  "name": "frontend_server",
-  "description": "Frontend server",
+  "name": "db_server_backup",
+  "description": "Backup database server",
   "chef_type": "role",
   "json_class": "Chef::Role",
   "default_attributes": {
@@ -8,10 +8,13 @@
   "override_attributes": {
     "system": {
       "timezone": "UTC"
+    },
+    "postgresql": {
+      "master": false
     }
   },
   "run_list": [
     "recipe[server_core]",
-    "recipe[server_frontend]"
+    "recipe[server_db]"
   ]
 }
