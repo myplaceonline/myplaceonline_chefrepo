@@ -53,6 +53,7 @@
 
 # Create Cookbook
 
+    COOKBOOK=...
     chef generate cookbook cookbooks/$COOKBOOK
     berks install -b cookbooks/$COOKBOOK/Berksfile
 

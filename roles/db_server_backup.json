@@ -15,6 +15,7 @@
   },
   "run_list": [
     "recipe[server_core]",
-    "recipe[server_db]"
+    "recipe[server_db]",
+    "recipe[server_finish]"
   ]
 }

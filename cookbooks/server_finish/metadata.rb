@@ -1,0 +1,7 @@
+name 'server_finish'
+maintainer 'Myplaceonline'
+maintainer_email 'root@myplaceonline.com'
+license 'all_rights'
+description 'Installs/Configures server_finish'
+long_description 'Installs/Configures server_finish'
+version '0.1.1'

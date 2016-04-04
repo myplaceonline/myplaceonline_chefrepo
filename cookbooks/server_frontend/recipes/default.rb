@@ -2,7 +2,7 @@ template "/etc/yum.repos.d/SSLMate.repo" do
   source "SSLMate.repo"
 end
 
-package %w{sslmate haproxy}
+package %w{sslmate haproxy letsencrypt}
 
 template "/root/.sslmate" do
   source "sslmate.erb"

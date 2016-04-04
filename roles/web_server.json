@@ -13,6 +13,7 @@
   "run_list": [
     "recipe[server_core]",
     "recipe[nginx_prereqs]",
-    "recipe[server_web]"
+    "recipe[server_web]",
+    "recipe[server_finish]"
   ]
 }
