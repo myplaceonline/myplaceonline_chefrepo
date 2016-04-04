@@ -18,6 +18,9 @@
       "root_email": "root@myplaceonline.com",
       "tmpdir": "/var/tmp/"
     },
+    "sslmate": {
+      "certname": "www.myplaceonline.com"
+    },
     "nginx": {
       "user": "nginx",
       "default_site_enabled": false,

@@ -15,10 +15,11 @@ Chef::Log.info %{#{myplaceonline_logo}
   OS: #{node["kernel"]["name"]} #{node["kernel"]["release"]}
       #{node["os"]} #{node["platform"]} #{node["platform_version"]}
       #{node["uptime"]}
-  hostname: #{node["hostname"]}
-  machinename: #{node["machinename"]}
-  fqdn: #{node["fqdn"]}
-  domain: #{node["domain"]}
+  name: #{node.name}
+  hostname: #{node.hostname}
+  machinename: #{node.machinename}
+  fqdn: #{node.fqdn}
+  domain: #{node.domain}
   roles: #{node["roles"].inspect}
   environment: #{node.chef_environment}
 }
