@@ -1,0 +1,4 @@
+cluster=<%= node.postgresql.replication_cluster %>
+node=<%= node.hostname.scan(/\d/).join("") %>
+node_name=<%= node.hostname %>
+conninfo='host=<%= node.fqdn.dup.insert(node.fqdn.index('.'), "-internal") %> user=repmgr dbname=repmgr'

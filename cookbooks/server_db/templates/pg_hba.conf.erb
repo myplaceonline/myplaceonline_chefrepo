@@ -89,4 +89,10 @@ local   all             all                                     peer
 #host    replication     postgres        127.0.0.1/32            ident
 #host    replication     postgres        ::1/128                 ident
 
+local    repmgr          repmgr                                trust
+host     repmgr          repmgr             samenet            trust
+
+local    replication     repmgr                                trust
+host     replication     repmgr             samenet            trust
+
 host    all             <%= node.db.dbuser %>             samenet            md5
