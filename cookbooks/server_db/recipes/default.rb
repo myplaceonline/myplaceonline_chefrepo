@@ -177,4 +177,9 @@ else
   service "postgresql-#{node.postgresql.version}" do
     action [:enable, :start]
   end
+
+  execute "create-repmgr-db" do
+    command "sudo -i -u postgres /usr/pgsql-#{node.postgresql.version}/bin/repmgr standby register"
+    only_if { `sudo -i -u postgres psql -d repmgr -tAc \"SELECT * FROM repmgr_#{node.postgresql.replication_cluster}.repl_nodes WHERE name='#{node.hostname}';\" | wc -l`.chomp == "0" }
+  end
 end
