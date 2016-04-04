@@ -111,3 +111,9 @@ end
 service "nginx" do
   action "start"
 end
+
+file "/root/.irbrc" do
+  action :create_if_missing
+  content "IRB.conf[:PROMPT_MODE] = :SIMPLE"
+  mode "0700"
+end

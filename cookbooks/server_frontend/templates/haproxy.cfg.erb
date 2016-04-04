@@ -72,3 +72,4 @@ backend servers
   <% @web_servers.each do |web_server| %>
     server  <%= web_server.hostname %> <%= web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") %>:80 check cookie <%= web_server.hostname %>
   <% end %>
+    http-request set-header X-Forwarded-Proto https if { ssl_fc }
