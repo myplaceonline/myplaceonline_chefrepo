@@ -68,6 +68,7 @@ frontend myplaceonline
 #---------------------------------------------------------------------
 backend servers
     balance     roundrobin
+    cookie SERVERID insert indirect nocache
   <% @web_servers.each do |web_server| %>
-    server  <%= web_server.hostname %> <%= web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") %>:80 check
+    server  <%= web_server.hostname %> <%= web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") %>:80 check cookie <%= web_server.hostname %>
   <% end %>
