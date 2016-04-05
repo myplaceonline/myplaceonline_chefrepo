@@ -25,4 +25,5 @@ server {
   passenger_env_var YELP_TOKEN_SECRET <%= @yelp['token_secret'] %>;
   passenger_env_var ROOT_EMAIL <%= node.app.root_email %>;
   passenger_env_var ROOT_PASSWORD <%= @root_password %>;
+  passenger_env_var PERMDIR <%= node.nfs.client.mount %>;
 }
