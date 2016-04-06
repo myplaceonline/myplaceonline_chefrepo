@@ -31,7 +31,7 @@ template "/etc/haproxy/haproxy.cfg" do
   variables({
     :web_servers => search(:node, "chef_environment:#{node.chef_environment} AND role:web_server")
   })
-  notifies :restart, "service[haproxy]"
+  notifies :reload, "service[haproxy]", :immediately
 end
 
 service "haproxy" do

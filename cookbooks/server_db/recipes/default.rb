@@ -37,9 +37,9 @@ if node.postgresql.master
 
   template "/var/lib/pgsql/#{node.postgresql.version}/data/pg_hba.conf" do
     source "pg_hba.conf.erb"
-    notifies :restart, "service[postgresql-#{node.postgresql.version}]"
     owner "postgres"
     group "postgres"
+    notifies :restart, "service[postgresql-#{node.postgresql.version}]", :immediately
   end
 
   template "/var/lib/pgsql/#{node.postgresql.version}/data/postgresql.replication.conf" do
@@ -52,7 +52,7 @@ if node.postgresql.master
     source "postgresql.conf.erb"
     owner "postgres"
     group "postgres"
-    notifies :restart, "service[postgresql-#{node.postgresql.version}]"
+    notifies :restart, "service[postgresql-#{node.postgresql.version}]", :immediately
   end
 end
 
@@ -171,7 +171,7 @@ else
     source "postgresql.conf.erb"
     owner "postgres"
     group "postgres"
-    notifies :restart, "service[postgresql-#{node.postgresql.version}]"
+    notifies :restart, "service[postgresql-#{node.postgresql.version}]", :immediately
   end
 
   service "postgresql-#{node.postgresql.version}" do

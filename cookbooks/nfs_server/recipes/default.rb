@@ -10,7 +10,7 @@ end
 
 template "/etc/exports" do
   source "exports.erb"
-  notifies :restart, "service[nfs-server]"
+  notifies :restart, "service[nfs-server]", :immediately
 end
 
 service "nfs-server" do
