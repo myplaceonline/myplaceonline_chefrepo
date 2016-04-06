@@ -1,0 +1,3 @@
+*/5 * * * * curl "<%= node.app.server_protocol %>://<%= node.app.server_name %>/admin/ensure_pending_all_users?key=<%= @devise_secret %>" >> <%= node.web.dir %>/log/crontab.log 2>&1
+
+*/5 * * * * cd <%= node.web.dir %> && RAILS_ENV=<%= node.chef_environment %> SECRET_KEY_BASE=<%= @devise_secret %> ROOT_EMAIL=<%= node.app.root_email %> ROOT_PASSWORD=<%= @root_password %> WEB_DOMAIN=<%= node.app.server_name %> WEB_PROTOCOL=<%= node.app.server_protocol %> SMTP_USER=<%= node.app.smtp_user %> SMTP_PASSWORD=<%= @smtp_password %> MAIL_FROM=<%= node.app.mail_from %> PERMDIR=<%= node.nfs.client.mount %> <%= node.web.dir %>/bin/delayed_job run --exit-on-complete >> <%= node.web.dir %>/log/crontab.log 2>&1

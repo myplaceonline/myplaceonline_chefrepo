@@ -26,4 +26,5 @@ server {
   passenger_env_var ROOT_EMAIL <%= node.app.root_email %>;
   passenger_env_var ROOT_PASSWORD <%= @root_password %>;
   passenger_env_var PERMDIR <%= node.nfs.client.mount %>;
+  passenger_env_var NODENAME <%= node.fqdn %>;
 }

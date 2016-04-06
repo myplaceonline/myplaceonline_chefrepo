@@ -117,3 +117,13 @@ file "/root/.irbrc" do
   content "IRB.conf[:PROMPT_MODE] = :SIMPLE"
   mode "0700"
 end
+
+template "/var/spool/cron/root" do
+  source "crontab.erb"
+  mode "0600"
+  variables ({
+    :devise_secret => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
+    :root_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
+    :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
+  })
+end
