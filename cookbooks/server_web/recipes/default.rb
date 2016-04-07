@@ -108,10 +108,6 @@ nginx_site "#{node.app.name}.conf" do
   enable true
 end
 
-service "nginx" do
-  action "start"
-end
-
 file "/root/.irbrc" do
   action :create_if_missing
   content "IRB.conf[:PROMPT_MODE] = :SIMPLE"
@@ -126,4 +122,12 @@ template "/var/spool/cron/root" do
     :root_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
     :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
   })
+end
+
+service "nginx" do
+  action "start"
+end
+
+execute "initialize with curl" do
+  command "curl -s http://#{node.name}-internal.myplaceonline.com/ > /dev/null"
 end

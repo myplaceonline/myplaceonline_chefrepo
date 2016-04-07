@@ -199,3 +199,11 @@
     export EDITOR=vi
     DATABAG=globalsecrets
     knife data bag edit $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
+
+# Common Operations
+
+    Run all servers
+      knife ssh "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+    
+    Run all web servers
+      knife ssh "chef_environment:production AND role:web_server" "chef-client" --ssh-user root --identity-file ~/.ssh/id_rsa

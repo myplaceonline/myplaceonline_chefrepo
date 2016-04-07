@@ -16,3 +16,7 @@ execute "mount nfs" do
   command "mount -a"
   only_if { `df -h #{node.nfs.client.mount} | grep #{node.nfs.client.host} | wc -l`.chomp == "0" }
 end
+
+directory "#{node.nfs.client.mount}" do
+  mode "0777"
+end
