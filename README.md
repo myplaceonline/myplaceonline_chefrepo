@@ -202,8 +202,15 @@
 
 # Common Operations
 
-    Run all servers
+    Update website code
+      knife ssh -C 1 "chef_environment:production AND role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+    
+    Update all servers (note: this concurrently updates web servers, affecting availability)
       knife ssh "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
     
-    Run all web servers
-      knife ssh "chef_environment:production AND role:web_server" "chef-client" --ssh-user root --identity-file ~/.ssh/id_rsa
+    Update all servers of a particular role (e.g. frontend)
+      knife ssh "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+    
+    Update particular server
+      NODE=db2
+      knife ssh "chef_environment:production AND name:$NODE" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa

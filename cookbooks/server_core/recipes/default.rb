@@ -81,7 +81,7 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
   mode "0755"
 end
 
-package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb}
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain}
 
 directory "/root/.ssh/" do
   mode "0700"
@@ -99,4 +99,23 @@ end
 
 execute "update" do
   command "dnf -y update"
+end
+
+service "ntpd" do
+  action [:enable, :start]
+end
+
+template "/etc/postfix/main.cf" do
+  source "main.cf.erb"
+  variables ({
+    :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"]
+  })
+end
+
+service "postfix" do
+  action [:enable, :start]
+end
+
+template "/etc/security/limits.conf" do
+  source "limits.conf.erb"
 end

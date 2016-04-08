@@ -92,7 +92,7 @@ search(:node, "chef_environment:#{node.chef_environment} AND role:db_server*").e
     
     log "server info" do
       message %{
-        Processing #{dbserver["fqdn"]}
+Processing #{dbserver["fqdn"]}
       }
       level :info
     end
@@ -181,5 +181,19 @@ else
   execute "create-repmgr-db" do
     command "sudo -i -u postgres /usr/pgsql-#{node.postgresql.version}/bin/repmgr standby register"
     only_if { `sudo -i -u postgres psql -d repmgr -tAc \"SELECT * FROM repmgr_#{node.postgresql.replication_cluster}.repl_nodes WHERE name='#{node.hostname}';\" | wc -l`.chomp == "0" }
+  end
+end
+
+if !node.postgresql.master
+  directory "#{node.nfs.client.mount_backup}" do
+    mode "0777"
+  end
+  
+  file "/var/spool/cron/root" do
+    content %{
+0 0 * * * rsync -avr /var/lib/remotenfs/ /var/lib/remotenfs_backup/ > /var/log/crontab.log 2>&1
+
+}
+    mode "0600"
   end
 end

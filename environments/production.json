@@ -58,6 +58,7 @@
     "nfs": {
       "client": {
         "mount": "/var/lib/remotenfs/",
+        "mount_backup": "/var/lib/remotenfs_backup/",
         "host": "db1-internal.myplaceonline.com"
       },
       "server": {
