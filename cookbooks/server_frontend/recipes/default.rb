@@ -1,8 +1,8 @@
+package %w{sslmate haproxy letsencrypt socat nmap-ncat}
+
 template "/etc/yum.repos.d/SSLMate.repo" do
   source "SSLMate.repo"
 end
-
-package %w{sslmate haproxy letsencrypt}
 
 template "/root/.sslmate" do
   source "sslmate.erb"
@@ -29,7 +29,8 @@ template "/etc/haproxy/haproxy.cfg" do
   source "haproxy.cfg.erb"
   mode "0644"
   variables({
-    :web_servers => search(:node, "chef_environment:#{node.chef_environment} AND role:web_server")
+    :web_servers => search(:node, "chef_environment:#{node.chef_environment} AND role:web_server"),
+    :stats_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["haproxy"]["stats"]
   })
   notifies :reload, "service[haproxy]", :immediately
 end

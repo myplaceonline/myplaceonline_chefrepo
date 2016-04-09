@@ -54,6 +54,14 @@ defaults
     timeout check           10s
     maxconn                 3000
 
+listen admin
+    bind *:9443 ssl crt /etc/sslmate/www.myplaceonline.com.combined.pem
+    stats enable
+    stats uri /
+    stats realm HAProxy\ Statistics
+    stats auth admin:<%= @stats_password %>
+    stats admin if TRUE
+
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
