@@ -81,7 +81,11 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
   mode "0755"
 end
 
-package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain}
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog}
+
+service "rsyslog" do
+  action [:enable, :start]
+end
 
 directory "/root/.ssh/" do
   mode "0700"
