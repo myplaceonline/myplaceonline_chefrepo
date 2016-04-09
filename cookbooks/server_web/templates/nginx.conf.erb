@@ -27,4 +27,5 @@ server {
   passenger_env_var ROOT_PASSWORD <%= @root_password %>;
   passenger_env_var PERMDIR <%= node.nfs.client.mount %>;
   passenger_env_var NODENAME <%= node.fqdn %>;
+  passenger_env_var SOURCE_REVISION <%= @source_revision %>;
 }

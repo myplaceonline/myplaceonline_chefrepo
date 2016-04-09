@@ -12,6 +12,15 @@ directory "#{node.web.dir}" do
   recursive true
 end
 
+service "nginx" do
+  action "stop"
+end
+
+git "#{node.web.dir}" do
+  repository "https://github.com/myplaceonline/myplaceonline_rails"
+  action :sync
+end
+
 template "#{node.nginx.dir}/sites-available/#{node.app.name}.conf" do
   source "nginx.conf.erb"
   mode "0644"
@@ -20,16 +29,8 @@ template "#{node.nginx.dir}/sites-available/#{node.app.name}.conf" do
     :root_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
     :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
     :yelp => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["yelp"],
+    :source_revision => %x{git --git-dir #{node.web.dir}/.git/ rev-parse HEAD}.strip
   })
-end
-
-service "nginx" do
-  action "stop"
-end
-
-git "#{node.web.dir}" do
-  repository "https://github.com/myplaceonline/myplaceonline_rails"
-  action :sync
 end
 
 directory "#{node.web.dir}" do
