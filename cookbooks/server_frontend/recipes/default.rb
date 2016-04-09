@@ -25,6 +25,11 @@ execute "downloads ssl certs" do
   returns [0,10]
 end
 
+template "/etc/rsyslog.d/haproxy.conf" do
+  source "rsyslog_haproxy.conf.erb"
+  notifies :restart, "service[rsyslog]", :immediately
+end
+
 template "/etc/haproxy/haproxy.cfg" do
   source "haproxy.cfg.erb"
   mode "0644"

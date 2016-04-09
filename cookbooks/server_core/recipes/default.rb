@@ -87,6 +87,11 @@ service "rsyslog" do
   action [:enable, :start]
 end
 
+template "/etc/rsyslog.conf" do
+  source "rsyslog.conf.erb"
+  notifies :restart, "service[rsyslog]", :immediately
+end
+
 directory "/root/.ssh/" do
   mode "0700"
 end
