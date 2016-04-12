@@ -45,6 +45,18 @@ execute "runtime-selinux-permissive" do
   only_if { `getenforce`.chomp != "Permissive" }
 end
 
+file "/root/.passwd" do
+  content data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["root"]
+end
+
+# We set a root password in the case we need to do a manual login from the web console
+execute "set-root-password" do
+  command %{
+    passwd --stdin root < /root/.passwd;
+    rm -f /root/.passwd;
+  }
+end
+
 template "/etc/commonprofile.sh" do
   source "commonprofile.sh"
   mode "0755"
