@@ -55,7 +55,7 @@ defaults
     maxconn                 3000
 
 listen admin
-    bind *:9443 ssl crt /etc/sslmate/www.myplaceonline.com.combined.pem
+    bind *:9443 ssl crt /etc/haproxy/ssl/myplaceonline.com.pem
     stats enable
     stats uri /
     stats realm HAProxy\ Statistics
@@ -67,8 +67,10 @@ listen admin
 #---------------------------------------------------------------------
 frontend myplaceonline
     bind *:80
-    bind *:443 ssl crt /etc/sslmate/www.myplaceonline.com.combined.pem
+    bind *:443 ssl crt /etc/haproxy/ssl/myplaceonline.com.pem
     redirect scheme https if !{ ssl_fc }
+    acl letsencrypt-request path_beg -i /.well-known/acme-challenge/
+    use_backend letsencrypt if letsencrypt-request
     default_backend             servers
 
 #---------------------------------------------------------------------
@@ -81,3 +83,7 @@ backend servers
     server  <%= web_server.hostname %> <%= web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") %>:80 check cookie <%= web_server.hostname %>
   <% end %>
     http-request set-header X-Forwarded-Proto https if { ssl_fc }
+
+backend letsencrypt
+    mode http
+    server letsencrypt 127.0.0.1:9999

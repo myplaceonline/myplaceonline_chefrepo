@@ -1,28 +1,19 @@
-package %w{sslmate haproxy letsencrypt socat nmap-ncat}
+package %w{haproxy letsencrypt socat nmap-ncat}
 
-template "/etc/yum.repos.d/SSLMate.repo" do
-  source "SSLMate.repo"
-end
-
-template "/root/.sslmate" do
-  source "sslmate.erb"
-  mode "0600"
-  variables :sslmate => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["sslmate"]
-end
-
-directory "/etc/sslmate/" do
-  mode "0755"
-end
-
-file "/etc/sslmate/www.myplaceonline.com.key" do
-  action :create_if_missing
-  content data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["keys"]["sslmate"]["private"]
+directory "/etc/haproxy/ssl/" do
   mode "0700"
+  owner "haproxy"
+  group "haproxy"
 end
 
-execute "downloads ssl certs" do
-  command "sslmate download #{node.sslmate.certname}"
-  returns [0,10]
+execute "initial-cert" do
+  command "/usr/bin/letsencrypt --agree-tos --renew-by-default --email contact@myplaceonline.com --standalone --standalone-supported-challenges http-01 --http-01-port 9999 certonly -d myplaceonline.com -d www.myplaceonline.com && cat /etc/letsencrypt/live/myplaceonline.com/{fullchain.pem,privkey.pem} > /etc/haproxy/ssl/myplaceonline.com.pem"
+  only_if { !Dir.exists?("/etc/letsencrypt/live/") }
+end
+
+template "/etc/cron.d/letsencrypt" do
+  source "crontab_letsencrypt"
+  mode "0755"
 end
 
 template "/etc/rsyslog.d/haproxy.conf" do
