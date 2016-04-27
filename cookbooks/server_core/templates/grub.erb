@@ -1,0 +1,9 @@
+GRUB_TIMEOUT=1
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL="serial console"
+GRUB_SERIAL_COMMAND="serial --unit=1"
+GRUB_CMDLINE_LINUX="no_timer_check console=tty1 console=ttyS0,115200n8 console=ttyS1 crashkernel=<%= 160 + ((((node["memory"]["total"].to_f / 4.0) * 2.0) / 8.0) / 1048576.0).to_i + 4 %>M"
+GRUB_DISABLE_RECOVERY="true"
+<%# https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html-single/Kernel_Crash_Dump_Guide/index.html#sect-kdump-memory-requirements %>

@@ -207,11 +207,19 @@
     Update website code
       knife ssh -C 1 "chef_environment:production AND role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
     
+    Update all non-web servers
+      knife ssh -C 1 "chef_environment:production AND NOT role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+    
     Update particular server
       UPDATENODE=db2; knife ssh "chef_environment:production AND name:${UPDATENODE}" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+    
+    Update all servers of a particular role (e.g. frontend)
+      knife ssh -C 1 "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      
+    Run a command on all servers
+      knife ssh "chef_environment:production" "$COMMAND" --ssh-user root --identity-file ~/.ssh/id_rsa
+      
+# Less Common Operations
 
     Update all servers (note: this concurrently updates web servers, affecting availability)
       knife ssh "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
-    
-    Update all servers of a particular role (e.g. frontend)
-      knife ssh "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa

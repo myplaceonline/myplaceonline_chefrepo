@@ -22,6 +22,7 @@ Chef::Log.info %{#{myplaceonline_logo}
   domain: #{node.domain}
   roles: #{node["roles"].inspect}
   environment: #{node.chef_environment}
+  memory: #{node["memory"]["total"].to_f}
 }
 
 execute "info" do
@@ -93,15 +94,33 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
   mode "0755"
 end
 
-package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog}
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog gnupg kexec-tools lzo lzo-devel lzo-minilzo crash}
+
+service "atop" do
+  action [:enable, :start]
+end
 
 service "rsyslog" do
   action [:enable, :start]
 end
 
+service "kdump" do
+  action [:enable]
+end
+
 template "/etc/rsyslog.conf" do
   source "rsyslog.conf.erb"
   notifies :restart, "service[rsyslog]", :immediately
+end
+
+execute "update-grub" do
+  command "/usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg"
+  action :nothing
+end
+
+template "/etc/default/grub" do
+  source "grub.erb"
+  notifies :run, "execute[update-grub]", :immediately
 end
 
 directory "/root/.ssh/" do
@@ -113,13 +132,16 @@ file "/root/.ssh/authorized_keys" do
   mode "0700"
 end
 
-swap_file '/swap1' do
+#swap_file '/swap1' do
   # size in MBs
-  size data_bag_item("server", "server")["swap1"]
-end
+#  size data_bag_item("server", "server")["swap1"]
+#end
 
 execute "update" do
-  command "dnf -y update"
+  command %{
+    dnf -y update;
+    dnf -y --enablerepo fedora-debuginfo --enablerepo updates-debuginfo update;
+  }
 end
 
 service "ntpd" do
