@@ -94,7 +94,17 @@ template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
   mode "0755"
 end
 
-package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog gnupg kexec-tools lzo lzo-devel lzo-minilzo crash}
+file "/etc/yum.repos.d/influxdb.repo" do
+  content %q{[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/7Server/\$basearch/stable
+enabled = 1
+gpgcheck = 0
+gpgkey = https://repos.influxdata.com/influxdb.key
+} 
+end
+
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog gnupg kexec-tools lzo lzo-devel lzo-minilzo bison bison-devel ncurses ncurses-devel telegraf telnet}
 
 service "atop" do
   action [:enable, :start]
@@ -105,7 +115,15 @@ service "rsyslog" do
 end
 
 service "kdump" do
-  action [:enable]
+  action [:enable] # don't auto-start because we may not have crashkernel yet
+end
+
+template "/etc/telegraf/telegraf.conf" do
+  source "telegraf.conf.erb"
+end
+
+service "telegraf" do
+  action [:enable, :start]
 end
 
 template "/etc/rsyslog.conf" do
@@ -161,4 +179,22 @@ end
 
 template "/etc/security/limits.conf" do
   source "limits.conf.erb"
+end
+
+template "/root/.toprc" do
+  source "toprc" # Run `top` on a server, customize as needed, type `W` and then use that file (no support for erb)
+end
+
+execute "install crash" do
+  command %{
+    cd /usr/local/src/;
+    wget https://github.com/crash-utility/crash/archive/7.1.5.tar.gz;
+    rm -rf crash-7.1.5;
+    tar xzvf 7.1.5.tar.gz;
+    cd crash-7.1.5;
+    echo '-DLZO' > CFLAGS.extra;
+    echo '-llzo2' > LDFLAGS.extra;
+    make;
+  }
+  not_if { File.exist?("/usr/local/src/crash-7.1.5/crash") }
 end

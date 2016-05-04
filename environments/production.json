@@ -64,6 +64,9 @@
       "server": {
         "directory": "/var/lib/nfsshare/"
       }
+    },
+    "influxdb": {
+      "url": "http://admin-internal.myplaceonline.com:8086"
     }
   },
   "override_attributes": {

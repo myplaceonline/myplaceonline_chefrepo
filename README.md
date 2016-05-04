@@ -2,7 +2,7 @@
 
     setenforce Permissive
     sed -i 's/^SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-    yum install -y ntp python python3-yumdaemon sendmail make mailx cyrus-sasl-plain postfix letsencrypt
+    yum install -y ntp python python3-yumdaemon sendmail make mailx cyrus-sasl-plain postfix letsencrypt wget
     systemctl start ntpd.service
     systemctl enable ntpd.service
     mkdir /etc/opscode/
@@ -50,6 +50,75 @@
       nginx['ssl_certificate'] = "/etc/letsencrypt/live/admin.myplaceonline.com/fullchain.pem"
       nginx['ssl_certificate_key'] = "/etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem"
     chef-server-ctl reconfigure
+    
+    vi /etc/sysctl.conf
+      vm.swappiness=0
+      net.core.rmem_default=1048576
+      net.core.wmem_default=1048576
+      net.core.rmem_max=16777216
+      net.core.wmem_max=16777216
+      net.ipv4.tcp_rmem=4096 1048576 16777216
+      net.ipv4.tcp_wmem=4096 1048576 16777216
+
+    dnf install firewalld
+    systemctl start firewalld.service
+    systemctl enable firewalld.service
+    firewall-cmd --add-service=https
+
+    cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
+    [influxdb]
+    name = InfluxDB Repository - RHEL \$releasever
+    baseurl = https://repos.influxdata.com/rhel/7Server/\$basearch/stable
+    enabled = 1
+    gpgcheck = 1
+    gpgkey = https://repos.influxdata.com/influxdb.key
+    EOF
+
+    dnf install influxdb
+    vi /etc/influxdb/influxdb.conf
+      Replace all binds with internal IP
+      And add to the top
+        bind-address = "10.134.6.221:8088"
+    vi /usr/lib/systemd/system/influxdb.service
+      network-online
+    systemctl daemon-reload
+    systemctl enable influxdb
+    systemctl start influxdb
+    influx -host admin-internal.myplaceonline.com
+      CREATE DATABASE telegraf
+      CREATE USER influxadmin WITH PASSWORD '$PASSWORD' WITH ALL PRIVILEGES
+      
+    wget https://grafanarel.s3.amazonaws.com/builds/grafana-3.0.0-beta61461918338%C2%A7.x86_64.rpm
+    dnf install grafana-3.0.0-beta61461918338.x86_64.rpm
+    cp /etc/letsencrypt/archive/admin.myplaceonline.com/cert.pem /etc/letsencrypt/archive/admin.myplaceonline.com/privkey.pem /etc/grafana/
+    chown grafana:grafana /etc/grafana/*pem
+    chmod go-r /etc/grafana/*pem
+    vi /etc/grafana/grafana.ini
+      Update admin password in 
+      protocol = https
+      domain = admin.myplaceonline.com
+      cert_file = /etc/letsencrypt/archive/admin.myplaceonline.com/cert.pem
+      cert_key = /etc/letsencrypt/archive/admin.myplaceonline.com/privkey.pem
+    systemctl start grafana-server
+    systemctl enable grafana-server.service
+    firewall-cmd --zone=public --add-port=3000/tcp --permanent
+    firewall-cmd --zone=public --add-port=443/tcp --permanent
+    firewall-cmd --reload
+    vi /etc/sysconfig/network-scripts/ifcfg-eth1
+      ZONE=trusted
+    reboot
+    http://docs.grafana.org/datasources/influxdb/
+      http://admin-internal.myplaceonline.com:8086/
+      mydb
+      influxadmin
+      
+    show measurements
+    show tag keys
+    show field keys
+    show retention policies on telegraf
+    show series
+      
+    curl -G 'http://admin-internal.myplaceonline.com:8086/query?db=telegraf' --data-urlencode 'q=SHOW TAG VALUES FROM cpu WITH KEY = host'
 
 # Create Cookbook
 
@@ -141,7 +210,7 @@
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
     knife ssh "name:${NODE}" "chef-client --force-logger -r 'role[${ROLE}]'" --ssh-user root --identity-file ~/.ssh/id_rsa
 
-    # Create Server (see previous section): frontend1.myplaceonline.com, Fedora, 512MB, San Francisco, 138.68.192.106
+    # Create Server (see previous section): frontend1.myplaceonline.com, Fedora, 1GB, San Francisco, 138.68.192.106
     ENVIRONMENT=production; NODE=frontend1; ROLE=frontend_server
     knife bootstrap ${NODE}.myplaceonline.com -y --ssh-user root --identity-file ~/.ssh/id_rsa --node-name ${NODE} --run-list "recipe[bootstrap_server]" -E ${ENVIRONMENT} && sleep 120
     scp secret_key_databag_globalsecrets root@${NODE}.myplaceonline.com:/etc/myplaceonline/
@@ -216,9 +285,12 @@
     Update all servers of a particular role (e.g. frontend)
       knife ssh -C 1 "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
       
+    Update all servers sequentially
+      knife ssh -C 1 "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      
     Run a command on all servers
       knife ssh "chef_environment:production" "$COMMAND" --ssh-user root --identity-file ~/.ssh/id_rsa
-      
+
 # Less Common Operations
 
     Update all servers (note: this concurrently updates web servers, affecting availability)
