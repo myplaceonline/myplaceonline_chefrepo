@@ -22,7 +22,7 @@ Chef::Log.info %{#{myplaceonline_logo}
   domain: #{node.domain}
   roles: #{node["roles"].inspect}
   environment: #{node.chef_environment}
-  memory: #{node["memory"]["total"].to_f}
+  memory (MB): #{node["memory"]["total"].to_f/1024}
 }
 
 execute "info" do
@@ -116,14 +116,6 @@ end
 
 service "kdump" do
   action [:enable] # don't auto-start because we may not have crashkernel yet
-end
-
-template "/etc/telegraf/telegraf.conf" do
-  source "telegraf.conf.erb"
-end
-
-service "telegraf" do
-  action [:enable, :start]
 end
 
 template "/etc/rsyslog.conf" do

@@ -1,5 +1,14 @@
 # https://fedoraproject.org/wiki/PostgreSQL
 
+template "/etc/telegraf/telegraf.conf" do
+  source "telegraf.conf.erb"
+  notifies :restart, "service[telegraf]", :immediately
+end
+
+service "telegraf" do
+  action [:enable, :start]
+end
+
 # repmgr can't be built until Fedora 24 due to https://bugzilla.redhat.com/show_bug.cgi?id=784281
 # so we use PGDG
 

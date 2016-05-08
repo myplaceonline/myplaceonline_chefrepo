@@ -1,3 +1,12 @@
+template "/etc/telegraf/telegraf.conf" do
+  source "telegraf.conf.erb"
+  notifies :restart, "service[telegraf]", :immediately
+end
+
+service "telegraf" do
+  action [:enable, :start]
+end
+
 output_file = "/tmp/output"
 
 package %w{gnupg ImageMagick ImageMagick-c++ ImageMagick-c++-devel ImageMagick-devel ImageMagick-libs golang git ruby rubygems ruby-devel redhat-rpm-config gcc gcc-c++ openssl-devel postgresql-devel postgresql nodejs}

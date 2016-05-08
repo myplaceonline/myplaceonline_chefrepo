@@ -1,3 +1,12 @@
+template "/etc/telegraf/telegraf.conf" do
+  source "telegraf.conf.erb"
+  notifies :restart, "service[telegraf]", :immediately
+end
+
+service "telegraf" do
+  action [:enable, :start]
+end
+
 package %w{haproxy letsencrypt socat nmap-ncat}
 
 directory "/etc/haproxy/ssl/" do
@@ -13,7 +22,7 @@ end
 
 template "/etc/cron.d/letsencrypt" do
   source "crontab_letsencrypt"
-  mode "0755"
+  mode "0600"
 end
 
 template "/etc/rsyslog.d/haproxy.conf" do

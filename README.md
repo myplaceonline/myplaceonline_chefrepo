@@ -111,12 +111,13 @@
       http://admin-internal.myplaceonline.com:8086/
       mydb
       influxadmin
-      
-    show measurements
-    show tag keys
-    show field keys
-    show retention policies on telegraf
-    show series
+    
+    influx -host admin-internal.myplaceonline.com -database telegraf
+      show measurements
+      show tag keys
+      show field keys
+      show retention policies on telegraf
+      show series
       
     curl -G 'http://admin-internal.myplaceonline.com:8086/query?db=telegraf' --data-urlencode 'q=SHOW TAG VALUES FROM cpu WITH KEY = host'
 

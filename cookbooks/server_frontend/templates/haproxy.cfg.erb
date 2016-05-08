@@ -62,6 +62,11 @@ listen admin
     stats auth admin:<%= @stats_password %>
     stats admin if TRUE
 
+listen internaladmin
+    bind 127.0.0.1:9444
+    stats enable
+    stats uri /
+
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
