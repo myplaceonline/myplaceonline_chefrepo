@@ -25,6 +25,13 @@ Chef::Log.info %{#{myplaceonline_logo}
   memory (MB): #{node["memory"]["total"].to_f/1024}
 }
 
+# Machines may be memory constrained, so disable crons for the duration
+# of the chef-client run. Re-enable in the server_finish cookbook
+service "crond" do
+  action [:stop]
+  only_if { Dir.exists?("/etc/cron.d") }
+end
+
 execute "info" do
   command %{
     echo "";
@@ -112,6 +119,10 @@ end
 
 service "rsyslog" do
   action [:enable, :start]
+end
+
+template "/etc/kdump.conf" do
+  source "kdump.conf.erb"
 end
 
 service "kdump" do

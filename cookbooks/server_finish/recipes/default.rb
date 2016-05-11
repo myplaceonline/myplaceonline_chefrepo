@@ -20,3 +20,9 @@ end
 directory "#{node.nfs.client.mount}" do
   mode "0777"
 end
+
+# See matching stop in server_core
+service "crond" do
+  action [:start]
+  only_if { Dir.exists?("/etc/cron.d") }
+end
