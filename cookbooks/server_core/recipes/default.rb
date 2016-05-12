@@ -117,6 +117,11 @@ service "atop" do
   action [:enable, :start]
 end
 
+template "/etc/rsyslog.conf" do
+  source "rsyslog.conf.erb"
+  notifies :restart, "service[rsyslog]", :immediately
+end
+
 service "rsyslog" do
   action [:enable, :start]
 end
@@ -127,11 +132,6 @@ end
 
 service "kdump" do
   action [:enable] # don't auto-start because we may not have crashkernel yet
-end
-
-template "/etc/rsyslog.conf" do
-  source "rsyslog.conf.erb"
-  notifies :restart, "service[rsyslog]", :immediately
 end
 
 execute "update-grub" do
