@@ -149,6 +149,10 @@
 
     knife environment from file environments/production.json
 
+# Show environment
+
+    knife environment show production
+
 # Create Server
 
     # https://cloud.digitalocean.com/droplets/new
@@ -275,19 +279,19 @@
 # Common Operations
 
     Update website code
-      knife ssh -C 1 "chef_environment:production AND role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      knife ssh -e -C 1 "chef_environment:production AND role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
     
     Update all non-web servers
-      knife ssh -C 1 "chef_environment:production AND NOT role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      knife ssh -e -C 1 "chef_environment:production AND NOT role:web_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
     
     Update particular server
       UPDATENODE=db2; knife ssh "chef_environment:production AND name:${UPDATENODE}" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
     
     Update all servers of a particular role (e.g. frontend)
-      knife ssh -C 1 "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      knife ssh -e -C 1 "chef_environment:production AND role:frontend_server" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
       
     Update all servers sequentially
-      knife ssh -C 1 "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
+      knife ssh -e -C 1 "chef_environment:production" "chef-client --force-logger" --ssh-user root --identity-file ~/.ssh/id_rsa
       
     Run a command on all servers
       knife ssh "chef_environment:production" "$COMMAND" --ssh-user root --identity-file ~/.ssh/id_rsa

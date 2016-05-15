@@ -16,7 +16,8 @@
       "smtp_user": "myplaceonline",
       "mail_from": "contact@myplaceonline.com",
       "root_email": "root@myplaceonline.com",
-      "tmpdir": "/var/tmp/"
+      "tmpdir": "/var/tmp/",
+      "full_text_search_target": "db2-internal.myplaceonline.com:9200"
     },
     "sslmate": {
       "certname": "www.myplaceonline.com"
