@@ -30,6 +30,14 @@ git "#{node.web.dir}" do
   action :sync
 end
 
+file "#{node.web.dir}/log/passenger.log" do
+  mode '0666'
+end
+
+template "/etc/nginx/nginx.conf" do
+  source "nginx_core.conf.erb"
+end
+
 template "#{node.nginx.dir}/sites-available/#{node.app.name}.conf" do
   source "nginx.conf.erb"
   mode "0644"
