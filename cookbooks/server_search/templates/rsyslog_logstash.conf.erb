@@ -1,0 +1,1 @@
+*.*                         @<%= node['network']['interfaces']['eth1']['addresses'].select { |address, data| data['family'] == 'inet' }.keys[0] %>:10514;json-template

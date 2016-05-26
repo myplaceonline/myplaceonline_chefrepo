@@ -68,6 +68,9 @@
     },
     "influxdb": {
       "url": "http://admin-internal.myplaceonline.com:8086"
+    },
+    "syslog": {
+      "serverhost": "db2-internal.myplaceonline.com"
     }
   },
   "override_attributes": {

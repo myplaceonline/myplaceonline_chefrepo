@@ -7,7 +7,10 @@ service "telegraf" do
   action [:enable, :start]
 end
 
-package %w{haproxy letsencrypt socat nmap-ncat}
+package %w{haproxy socat nmap-ncat}
+
+# Strange dependency error on Fedora, need to retry later
+#package %w{letsencrypt}
 
 directory "/etc/haproxy/ssl/" do
   mode "0700"

@@ -119,7 +119,7 @@ end
 
 template "/etc/rsyslog.conf" do
   source "rsyslog.conf.erb"
-  notifies :restart, "service[rsyslog]", :immediately
+  notifies :restart, "service[rsyslog]", :delayed # some servers have a different syslog config, so don't update syslog immediately
 end
 
 service "rsyslog" do
@@ -200,4 +200,24 @@ execute "install crash" do
     make;
   }
   not_if { File.exist?("/usr/local/src/crash-7.1.5/crash") }
+end
+
+# https://www.elastic.co/guide/en/logstash/current/installing-logstash.html
+file "/etc/yum.repos.d/influxdb.repo" do
+  content %q{[logstash-2.3]
+name=Logstash repository for 2.3.x packages
+baseurl=http://packages.elastic.co/logstash/2.3/centos
+gpgcheck=0
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+}
+end
+
+package %w{logstash java-1.8.0-openjdk}
+
+if node["roles"].index("db_server_backup").nil?
+  template "/etc/rsyslog.d/01-client.conf" do
+    source "rsyslog_client.conf.erb"
+    notifies :restart, "service[rsyslog]", :immediately
+  end
 end
