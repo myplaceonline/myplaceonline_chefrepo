@@ -43,3 +43,16 @@ template "/etc/rsyslog.d/60-logstash.conf" do
   source "rsyslog_logstash.conf.erb"
   notifies :restart, "service[rsyslog]", :immediately
 end
+
+# https://www.elastic.co/guide/en/kibana/current/setup.html
+file "/etc/yum.repos.d/kibana.repo" do
+  content %q{[kibana-4.5]
+name=Kibana repository for 4.5.x packages
+baseurl=http://packages.elastic.co/kibana/4.5/centos
+gpgcheck=0
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+}
+end
+
+package %w{kibana}
