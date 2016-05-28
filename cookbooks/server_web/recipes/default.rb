@@ -30,6 +30,10 @@ git "#{node.web.dir}" do
   action :sync
 end
 
+template "/etc/nginx/conf.d/passenger.conf" do
+  source "passenger.conf.erb"
+end
+
 file "#{node.web.dir}/log/passenger.log" do
   mode '0666'
 end
