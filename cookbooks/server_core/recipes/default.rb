@@ -216,6 +216,15 @@ end
 package %w{logstash java-1.8.0-openjdk}
 
 if node["roles"].index("db_server_backup").nil?
+  template "/opt/logstash/bin/logstash" do
+    source "logstash.erb"
+    notifies :restart, "service[logstash]", :immediately
+  end
+
+  service "logstash" do
+    action [:enable, :start]
+  end
+  
   template "/etc/rsyslog.d/01-client.conf" do
     source "rsyslog_client.conf.erb"
     notifies :restart, "service[rsyslog]", :immediately

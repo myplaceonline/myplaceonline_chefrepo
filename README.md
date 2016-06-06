@@ -35,7 +35,7 @@
     vi /etc/postfix/main.cf
       smtp_sasl_auth_enable = yes 
       smtp_sasl_password_maps = static:myplaceonline:$PASSWORD
-      smtp_sasl_security_options = noanonymous 
+      smtp_sasl_security_options = noanonymous
       smtp_tls_security_level = encrypt
       header_size_limit = 4096000
       relayhost = [smtp.sendgrid.net]:587

@@ -4,6 +4,10 @@ directory "#{node.nfs.server.directory}" do
   mode "0700"
 end
 
+template "/etc/sysconfig/rpcbind" do
+  source "rpcbind.erb"
+end
+
 service "rpcbind" do
   action [:enable, :start]
 end
