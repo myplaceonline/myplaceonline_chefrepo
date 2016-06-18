@@ -21,10 +21,6 @@ directory "#{node.web.dir}" do
   recursive true
 end
 
-service "nginx" do
-  action "stop"
-end
-
 git "#{node.web.dir}" do
   repository "https://github.com/myplaceonline/myplaceonline_rails"
   action :sync
@@ -56,6 +52,11 @@ end
 
 directory "#{node.web.dir}" do
   mode '0755'
+end
+
+directory "#{node.web.dir}/tmp/" do
+  mode "0777"
+  recursive true
 end
 
 template "#{node.web.dir}/config/database.yml" do

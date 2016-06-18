@@ -1,6 +1,6 @@
 passenger_root <%= node.nginx.passenger.root %>;
 passenger_ruby /usr/bin/ruby;
-passenger_max_pool_size 2;
+passenger_max_pool_size 1;
 passenger_spawn_method smart-lv2;
 passenger_buffer_response on;
 passenger_min_instances 1;
