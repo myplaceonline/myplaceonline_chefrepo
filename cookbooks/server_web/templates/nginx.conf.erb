@@ -25,4 +25,7 @@ server {
   passenger_env_var FTS_TARGET <%= node.app.full_text_search_target %>;
   passenger_env_var RUBY_GC_MALLOC_LIMIT_MAX <%= node.rails.gc_max_newspace %>;
   passenger_env_var RUBY_GC_OLDMALLOC_LIMIT_MAX <%= node.rails.gc_max_oldspace %>;
+  passenger_env_var TWILIO_NUMBER <%= @twilio['number'] %>;
+  passenger_env_var TWILIO_ACCOUNT <%= @twilio['account'] %>;
+  passenger_env_var TWILIO_AUTH <%= @twilio['auth'] %>;
 }
