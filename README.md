@@ -46,6 +46,7 @@
     chef-server-ctl org-create myplaceonline "myplaceonline" --association_user root
     chef-server-ctl stop nginx
     letsencrypt certonly
+    # Also update grafana certs below (same certs, just copy and restart)
     vi /etc/opscode/chef-server.rb
       nginx['ssl_certificate'] = "/etc/letsencrypt/live/admin.myplaceonline.com/fullchain.pem"
       nginx['ssl_certificate_key'] = "/etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem"
@@ -90,7 +91,7 @@
       
     wget https://grafanarel.s3.amazonaws.com/builds/grafana-3.0.0-beta61461918338%C2%A7.x86_64.rpm
     dnf install grafana-3.0.0-beta61461918338.x86_64.rpm
-    cp /etc/letsencrypt/archive/admin.myplaceonline.com/cert.pem /etc/letsencrypt/archive/admin.myplaceonline.com/privkey.pem /etc/grafana/
+    cp /etc/letsencrypt/live/admin.myplaceonline.com/cert.pem /etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem /etc/grafana/
     chown grafana:grafana /etc/grafana/*pem
     chmod go-r /etc/grafana/*pem
     vi /etc/grafana/grafana.ini
