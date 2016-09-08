@@ -99,7 +99,9 @@ execute "initialize-setup" do
     "SECRET_KEY_BASE" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
     "ROOT_EMAIL" => node.app.root_email,
     "ROOT_PASSWORD" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
-    "FTS_TARGET" => node.app.full_text_search_target
+    "FTS_TARGET" => node.app.full_text_search_target,
+    "RUBY_GC_MALLOC_LIMIT_MAX" => node.rails.gc_max_newspace,
+    "RUBY_GC_OLDMALLOC_LIMIT_MAX" => node.rails.gc_max_oldspace
   })
   not_if { `psql -tA -U #{node.db.dbuser} -h #{node.db.host} -d #{node.db.dbname} -c \"\\dt\" | grep -c \"No relations found.\"`.chomp == "0" }
 end
@@ -112,7 +114,9 @@ execute "migrate db" do
     "SECRET_KEY_BASE" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
     "ROOT_EMAIL" => node.app.root_email,
     "ROOT_PASSWORD" => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
-    "FTS_TARGET" => node.app.full_text_search_target
+    "FTS_TARGET" => node.app.full_text_search_target,
+    "RUBY_GC_MALLOC_LIMIT_MAX" => node.rails.gc_max_newspace,
+    "RUBY_GC_OLDMALLOC_LIMIT_MAX" => node.rails.gc_max_oldspace
   })
 end
 

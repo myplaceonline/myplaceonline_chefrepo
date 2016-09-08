@@ -88,6 +88,16 @@ template "/etc/sysctl.conf" do
   notifies :run, 'execute[reload-sysctl]', :immediately
 end
 
+execute "restart-journald" do
+  command "systemctl restart systemd-journald"
+  action :nothing
+end
+
+template "/etc/systemd/journald.conf" do
+  source "journald.conf.erb"
+  notifies :run, 'execute[restart-journald]', :immediately
+end
+
 execute "commands1" do
   command %{
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
@@ -191,15 +201,14 @@ end
 execute "install crash" do
   command %{
     cd /usr/local/src/;
-    wget https://github.com/crash-utility/crash/archive/7.1.5.tar.gz;
-    rm -rf crash-7.1.5;
-    tar xzvf 7.1.5.tar.gz;
-    cd crash-7.1.5;
+    rm -rf crash*;
+    git clone https://github.com/crash-utility/crash/;
+    cd crash;
     echo '-DLZO' > CFLAGS.extra;
     echo '-llzo2' > LDFLAGS.extra;
     make;
   }
-  not_if { File.exist?("/usr/local/src/crash-7.1.5/crash") }
+  not_if { File.exist?("/usr/local/src/crash/crash") }
 end
 
 # https://www.elastic.co/guide/en/logstash/current/installing-logstash.html
