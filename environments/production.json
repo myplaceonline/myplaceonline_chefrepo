@@ -24,7 +24,8 @@
     },
     "rails": {
       "gc_max_newspace": "33554432",
-      "gc_max_oldspace": "67108864"
+      "gc_max_oldspace": "67108864",
+      "threads_per_node": "2"
     },
     "nginx": {
       "user": "nginx",
