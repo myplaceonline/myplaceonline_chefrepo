@@ -4,7 +4,7 @@ maintainer_email 'root@myplaceonline.com'
 license 'all_rights'
 description 'Installs/Configures server_core'
 long_description 'Installs/Configures server_core'
-version '0.1.106'
+version '0.1.107'
 
 depends "dnf"
 depends "swap"

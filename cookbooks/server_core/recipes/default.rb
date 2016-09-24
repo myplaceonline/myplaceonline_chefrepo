@@ -121,7 +121,7 @@ gpgkey = https://repos.influxdata.com/influxdb.key
 } 
 end
 
-package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog gnupg kexec-tools lzo lzo-devel lzo-minilzo bison bison-devel ncurses ncurses-devel telegraf telnet iftop}
+package %w{multitail strace htop mtr traceroute patch atop sysstat iotop gdb bind-utils ntp python sendmail make mailx postfix tcpdump cyrus-sasl-plain rsyslog gnupg kexec-tools lzo lzo-devel lzo-minilzo bison bison-devel ncurses ncurses-devel telegraf telnet iftop git}
 
 service "atop" do
   action [:enable, :start]
