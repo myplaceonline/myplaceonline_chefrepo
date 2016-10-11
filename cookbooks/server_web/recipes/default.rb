@@ -60,6 +60,11 @@ directory "#{node.web.dir}/tmp/" do
   recursive true
 end
 
+directory "#{node.web.dir}/tmp/myp/" do
+  mode "0777"
+  recursive true
+end
+
 template "#{node.web.dir}/config/database.yml" do
   source "database.yml.erb"
   mode "0700"
