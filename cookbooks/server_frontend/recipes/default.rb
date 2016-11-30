@@ -7,10 +7,20 @@ service "telegraf" do
   action [:enable, :start]
 end
 
-package %w{haproxy socat nmap-ncat}
+package %w{haproxy socat nmap-ncat certbot nginx}
 
-# Strange dependency error on Fedora, need to retry later
-#package %w{letsencrypt}
+template "/usr/share/nginx/html/maintenance.html" do
+  source "maintenance.html.erb"
+end
+
+template "/etc/nginx/nginx.conf" do
+  source "nginx.conf.erb"
+  notifies :restart, "service[nginx]", :immediately
+end
+
+service "nginx" do
+  action [:enable, :start]
+end
 
 directory "/etc/haproxy/ssl/" do
   mode "0700"

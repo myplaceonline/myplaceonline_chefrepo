@@ -122,6 +122,16 @@
       
     curl -G 'http://admin-internal.myplaceonline.com:8086/query?db=telegraf' --data-urlencode 'q=SHOW TAG VALUES FROM cpu WITH KEY = host'
 
+## Update Certificates
+
+    chef-server-ctl stop nginx
+    letsencrypt certonly
+    chef-server-ctl start nginx
+    cp /etc/letsencrypt/live/admin.myplaceonline.com/cert.pem /etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem /etc/grafana/
+    chown grafana:grafana /etc/grafana/*pem
+    chmod go-r /etc/grafana/*pem
+    systemctl restart grafana-server
+
 # Create Cookbook
 
     COOKBOOK=...
