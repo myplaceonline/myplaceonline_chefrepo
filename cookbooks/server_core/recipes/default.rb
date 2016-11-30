@@ -102,8 +102,14 @@ execute "commands1" do
   command %{
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime;
     dnf -y install python python-dnf multitail htop lsof wget;
+  }
+end
+
+execute "commandsdebuginfo" do
+  command %{
     dnf -y --enablerepo fedora-debuginfo --enablerepo updates-debuginfo install kernel-debuginfo-common-x86_64 kernel-debuginfo glibc-debuginfo-common glibc-debuginfo systemtap perf;
   }
+  ignore_failure true
 end
 
 template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do

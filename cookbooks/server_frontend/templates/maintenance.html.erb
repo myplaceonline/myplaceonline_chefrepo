@@ -3,20 +3,51 @@
   <head>
     <title>myplaceonline is under maintenance</title>
     <meta charset="UTF-8">
+    <!-- Scripts and stylesheets here won't be loaded by the phonegap app -->
   </head>
   <body>
-    <pre>
-                             _                            _ _            
-                            | |                          | (_)           
-       _ __ ___  _   _ _ __ | | __ _  ___ ___  ___  _ __ | |_ _ __   ___ 
-      | '_ ` _ \| | | | '_ \| |/ _` |/ __/ _ \/ _ \| '_ \| | | '_ \ / _ \
-      | | | | | | |_| | |_) | | (_| | (_|  __/ (_) | | | | | | | | |  __/
-      |_| |_| |_|\__, | .__/|_|\__,_|\___\___|\___/|_| |_|_|_|_| |_|\___|
-                  __/ | |                                                
-                 |___/|_|                                                
+    <div data-uniqueid="maintenance" data-role="page" data-url="https://myplaceonline.com">
+      <script>
+        function addCSS(cssText) {
+          var css = document.createElement("style");
+          css.type = "text/css";
+          css.innerHTML = cssText;
+          document.body.appendChild(css);
+        }
+        
+        if (window.jQuery) {
+          // If jQuery exists, assume we're in the phonegap app
+          addCSS("#preheader { display: none; } #maintenance_content { text-align: center; }");
+        } else {
+          addCSS("#maintenance_header, #refresh_button { display: none; }");
+        }
+      </script>
+      <div id="maintenance_header" data-role="header">
+        <h1>myplaceonline</h1>
+      </div>
+      <div id="maintenance_content" role="main" class="ui-content">
+        <pre id="preheader">
+                                 _                            _ _            
+                                | |                          | (_)           
+           _ __ ___  _   _ _ __ | | __ _  ___ ___  ___  _ __ | |_ _ __   ___ 
+          | '_ ` _ \| | | | '_ \| |/ _` |/ __/ _ \/ _ \| '_ \| | | '_ \ / _ \
+          | | | | | | |_| | |_) | | (_| | (_|  __/ (_) | | | | | | | | |  __/
+          |_| |_| |_|\__, | .__/|_|\__,_|\___\___|\___/|_| |_|_|_|_| |_|\___|
+                      __/ | |                                                
+                     |___/|_|                                                
 
-    </pre>
-    <h1>myplaceonline is under maintenance</h1>
-    <p>Please try again after some time. Email <a href="mailto:contact@myplaceonline.com">contact@myplaceonline.com</a> for help.</p>
+        </pre>
+        <p>myplaceonline is under maintenance. Please try again after some time. Email <a href="mailto:contact@myplaceonline.com">contact@myplaceonline.com</a> for help.</p>
+        <p><a class="ui-btn" id="refresh_button">Retry</a></p>
+        <script>
+          if (window.jQuery) {
+            $("#refresh_button").one("click", function() {
+              app.navigate("/?phonegap=true");
+              return false;
+            });
+          }
+        </script>
+      </div>
+    </div>
   </body>
 </html>
