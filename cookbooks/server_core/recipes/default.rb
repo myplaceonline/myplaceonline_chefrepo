@@ -16,7 +16,6 @@ Chef::Log.info %{#{myplaceonline_logo}
       #{node["os"]} #{node["platform"]} #{node["platform_version"]}
       #{node["uptime"]}
   name: #{node.name}
-  hostname: #{node.hostname}
   machinename: #{node.machinename}
   fqdn: #{node.fqdn}
   domain: #{node.domain}
@@ -219,27 +218,20 @@ end
 
 # https://www.elastic.co/guide/en/logstash/current/installing-logstash.html
 file "/etc/yum.repos.d/influxdb.repo" do
-  content %q{[logstash-2.3]
-name=Logstash repository for 2.3.x packages
-baseurl=http://packages.elastic.co/logstash/2.3/centos
+  content %q{[logstash-5.x]
+name=Elastic repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
 gpgcheck=0
-gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=1
+autorefresh=1
+type=rpm-md
 }
 end
 
 package %w{logstash java-1.8.0-openjdk}
 
 if node["roles"].index("db_server_backup").nil?
-  template "/opt/logstash/bin/logstash" do
-    source "logstash.erb"
-  #  notifies :restart, "service[logstash]", :immediately
-  end
-
-  #service "logstash" do
-  #  action [:enable, :start]
-  #end
-  
   template "/etc/rsyslog.d/01-client.conf" do
     source "rsyslog_client.conf.erb"
     notifies :restart, "service[rsyslog]", :immediately
