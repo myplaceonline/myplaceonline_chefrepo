@@ -19,7 +19,7 @@
           // If jQuery exists, assume we're in the phonegap app
           addCSS("#preheader { display: none; } #maintenance_content { text-align: center; }");
         } else {
-          addCSS("#maintenance_header, #refresh_button { display: none; }");
+          addCSS("#maintenance_header, #maintenance_refresh_button { display: none; }");
         }
       </script>
       <div id="maintenance_header" data-role="header">
@@ -38,13 +38,16 @@
 
         </pre>
         <p>myplaceonline is under maintenance. Please try again after some time. Email <a href="mailto:contact@myplaceonline.com">contact@myplaceonline.com</a> for help.</p>
-        <p><a class="ui-btn" id="refresh_button">Retry</a></p>
+        <p><a class="ui-btn" id="maintenance_refresh_button">Retry</a></p>
         <script>
           if (window.jQuery) {
-            $("#refresh_button").one("click", function() {
-              app.navigate("/?phonegap=true");
-              return false;
-            });
+            if (!window.hasAttachedMaintenanceRefresh) {
+              window.hasAttachedMaintenanceRefresh = true;
+              $(document).on("click", "#maintenance_refresh_button", function() {
+                app.navigate("/?phonegap=true");
+                return false;
+              });
+            }
           }
         </script>
       </div>
