@@ -33,15 +33,15 @@
       "gzip_static": "on",
       "passenger": {
         "install_method": "source",
-        "version": "5.0.26",
+        "version": "5.0.30",
         "gem_binary": "/usr/bin/gem",
         "ruby": "/usr/bin/ruby",
-        "root": "/usr/local/share/gems/gems/passenger-5.0.26/"
+        "root": "/usr/local/share/gems/gems/passenger-5.0.30/"
       },
       "source": {
-        "version": "1.9.12",
-        "checksum": "1af2eb956910ed4b11aaf525a81bc37e135907e7127948f9179f5410337da042",
-        "_comment": "wget http://nginx.org/download/nginx-1.9.12.tar.gz; sha256sum nginx-1.9.12.tar.gz;",
+        "version": "1.11.6",
+        "checksum": "3153abbb518e2d9c032e1b127da3dc0028ad36cd4679e5f3be0b8afa33bc85bd",
+        "_comment": "wget http://nginx.org/download/nginx-1.11.6.tar.gz; sha256sum nginx-1.11.6.tar.gz;",
         "use_existing_user": true,
         "modules": [
           "nginx::ipv6",
