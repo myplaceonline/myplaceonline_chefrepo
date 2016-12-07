@@ -109,6 +109,7 @@ execute "commandsdebuginfo" do
     dnf -y --enablerepo fedora-debuginfo --enablerepo updates-debuginfo install kernel-debuginfo-common-x86_64 kernel-debuginfo glibc-debuginfo-common glibc-debuginfo systemtap perf;
   }
   ignore_failure true
+  retries 2
 end
 
 template "/var/chef/cache/cookbooks/dnf/libraries/dnf-query.py" do
