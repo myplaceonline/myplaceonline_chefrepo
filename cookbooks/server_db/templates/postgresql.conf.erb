@@ -114,9 +114,15 @@ max_connections = 100			# (change requires restart)
 
 # - Memory -
 
-# https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server
-shared_buffers = <%= ((node["memory"]["total"].to_f * 0.4) / 1024).to_i %>MB			# min 128kB
+
+# https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server#shared_buffers
+# "There are some workloads where even larger settings for shared_buffers are effective, but given the way PostgreSQL
+# also relies on the operating system cache, it's unlikely you'll find using more than 40% of RAM to work better than
+# a smaller amount."
+shared_buffers = <%= ((node["memory"]["total"].to_f * (node.postgresql.master ? 0.4 : 0.15)) / 1024).to_i %>MB			# min 128kB
 					# (change requires restart)
+
+
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
 #temp_buffers = 8MB			# min 800kB
@@ -288,8 +294,14 @@ dynamic_shared_memory_type = posix	# the default is the first option
 #cpu_index_tuple_cost = 0.005		# same scale as above
 #cpu_operator_cost = 0.0025		# same scale as above
 
-# https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server
-effective_cache_size = <%= ((node["memory"]["total"].to_f * 0.5) / 1024).to_i %>MB
+
+
+# https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server#effective_cache_size
+# "Setting effective_cache_size to 1/2 of total memory would be a normal conservative setting, and 3/4 of memory is a
+# more aggressive but still reasonable amount."
+effective_cache_size = <%= ((node["memory"]["total"].to_f * (node.postgresql.master ? 0.75 : 0.25)) / 1024).to_i %>MB
+
+
 
 # - Genetic Query Optimizer -
 
