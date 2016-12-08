@@ -28,8 +28,19 @@ directory "/etc/haproxy/ssl/" do
   group "haproxy"
 end
 
+# https://weakdh.org/sysadmin.html#haproxy
+execute "dhparams" do
+  user "haproxy"
+  cwd "/var/lib/haproxy/"
+  command "openssl dhparam -out /etc/haproxy/ssl/myplaceonline.com.dh 2048"
+  environment ({
+    "RANDFILE" => "/var/lib/haproxy/.rnd"
+  })
+  only_if { !File.exists?("/etc/haproxy/ssl/myplaceonline.com.dh") }
+end
+
 execute "initial-cert" do
-  command "/usr/bin/letsencrypt --agree-tos --renew-by-default --email contact@myplaceonline.com --standalone --standalone-supported-challenges http-01 --http-01-port 9999 certonly -d myplaceonline.com -d www.myplaceonline.com && cat /etc/letsencrypt/live/myplaceonline.com/{fullchain.pem,privkey.pem} > /etc/haproxy/ssl/myplaceonline.com.pem"
+  command "/usr/bin/certbot --agree-tos --renew-by-default --email contact@myplaceonline.com --standalone --preferred-challenges http-01 --http-01-port 9999 certonly -d myplaceonline.com -d www.myplaceonline.com && cat /etc/letsencrypt/live/myplaceonline.com/{fullchain.pem,privkey.pem} > /etc/haproxy/ssl/myplaceonline.com.pem; cat /etc/haproxy/ssl/myplaceonline.com.dh >> /etc/haproxy/ssl/myplaceonline.com.pem;"
   only_if { !Dir.exists?("/etc/letsencrypt/live/") }
 end
 
