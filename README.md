@@ -89,8 +89,20 @@
       CREATE DATABASE telegraf
       CREATE USER influxadmin WITH PASSWORD '$PASSWORD' WITH ALL PRIVILEGES
       
-    wget https://grafanarel.s3.amazonaws.com/builds/grafana-3.0.0-beta61461918338%C2%A7.x86_64.rpm
-    dnf install grafana-3.0.0-beta61461918338.x86_64.rpm
+    cat <<EOF | sudo tee /etc/yum.repos.d/grafana.repo
+    [grafana]
+    name=grafana
+    baseurl=https://packagecloud.io/grafana/stable/el/6/
+    repo_gpgcheck=1
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+    sslverify=1
+    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+    EOF
+
+      dnf install grafana
+    dnf install fontconfig freetype* urw-fonts
     cp /etc/letsencrypt/live/admin.myplaceonline.com/cert.pem /etc/letsencrypt/live/admin.myplaceonline.com/privkey.pem /etc/grafana/
     chown grafana:grafana /etc/grafana/*pem
     chmod go-r /etc/grafana/*pem
@@ -98,8 +110,8 @@
       Update admin password in 
       protocol = https
       domain = admin.myplaceonline.com
-      cert_file = /etc/letsencrypt/archive/admin.myplaceonline.com/cert.pem
-      cert_key = /etc/letsencrypt/archive/admin.myplaceonline.com/privkey.pem
+      cert_file = /etc/grafana/cert.pem
+      cert_key = /etc/grafana/privkey.pem
     systemctl start grafana-server
     systemctl enable grafana-server.service
     firewall-cmd --zone=public --add-port=3000/tcp --permanent
