@@ -1188,7 +1188,7 @@
 
 
 # # Read metrics about network interface usage
-# [[inputs.net]]
+[[inputs.net]]
 #   ## By default, telegraf gathers stats from any up interface (excluding loopback)
 #   ## Setting interfaces will tell it to gather these explicit interfaces,
 #   ## regardless of status.
@@ -1214,7 +1214,7 @@
 
 
 # # Read TCP metrics such as established, time wait and sockets counts.
-# [[inputs.netstat]]
+[[inputs.netstat]]
 #   # no configuration
 
 
@@ -1249,7 +1249,7 @@
 
 
 # # Read metrics of passenger using passenger-status
-[[inputs.passenger]]
+#[[inputs.passenger]]
 #   ## Path of passenger-status.
 #   ##
 #   ## Plugin gather metric via parsing XML output of passenger-status
@@ -1258,7 +1258,7 @@
 #   ##
 #   ## If no path is specified, then the plugin simply execute passenger-status
 #   ## hopefully it can be found in your PATH
-  command = "PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/passenger-instreg/ /usr/local/share/gems/gems/passenger-<%= node.nginx.passenger.version %>/bin/passenger-status -v --show=xml"
+#  command = "/usr/local/share/gems/gems/passenger-<%= node.nginx.passenger.version %>/bin/passenger_status.sh"
 
 
 # # Read metrics of phpfpm, via HTTP status page or socket
