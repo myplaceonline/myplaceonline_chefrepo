@@ -1249,7 +1249,7 @@
 
 
 # # Read metrics of passenger using passenger-status
-# [[inputs.passenger]]
+[[inputs.passenger]]
 #   ## Path of passenger-status.
 #   ##
 #   ## Plugin gather metric via parsing XML output of passenger-status
@@ -1258,7 +1258,7 @@
 #   ##
 #   ## If no path is specified, then the plugin simply execute passenger-status
 #   ## hopefully it can be found in your PATH
-#   command = "passenger-status -v --show=xml"
+  command = "PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/passenger-instreg/ /usr/local/share/gems/gems/passenger-<%= node.nginx.passenger.version %>/bin/passenger-status -v --show=xml"
 
 
 # # Read metrics of phpfpm, via HTTP status page or socket

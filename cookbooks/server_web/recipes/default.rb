@@ -26,6 +26,8 @@ git "#{node.web.dir}" do
   action :sync
 end
 
+directory "/var/run/passenger-instreg"
+
 template "/etc/nginx/conf.d/passenger.conf" do
   source "passenger.conf.erb"
 end
