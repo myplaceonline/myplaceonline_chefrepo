@@ -121,9 +121,15 @@
       ZONE=trusted
     reboot
     http://docs.grafana.org/datasources/influxdb/
-      http://admin-internal.myplaceonline.com:8086/
-      mydb
-      influxadmin
+      Name = mydb
+      Type = InfluxDB
+      Url = http://admin-internal.myplaceonline.com:8086/
+      Access = proxy
+      Database = telegraf
+      User = influxadmin
+      Password = ...
+      
+    https://grafana.net/dashboards/61
     
     influx -host admin-internal.myplaceonline.com -database telegraf
       show measurements
