@@ -296,8 +296,7 @@
 
 # Show encrypted data bag
 
-    DATABAG=globalsecrets
-    knife data bag show $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
+    export DATABAG=globalsecrets && knife data bag show $DATABAG $DATABAG --secret-file secret_key_databag_$DATABAG
 
 # Edit encrypted data bag
 

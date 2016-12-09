@@ -7,6 +7,13 @@
 
 # The imjournal module bellow is now used as a message source instead of imuxsock.
 $ModLoad imjournal # provides access to the systemd journal
+
+# "imjournal: begin to drop messages due to rate-limiting"
+# https://bugzilla.redhat.com/show_bug.cgi?id=1219957
+# http://www.rsyslog.com/doc/master/configuration/modules/imjournal.html
+$imjournalRatelimitInterval 60
+$imjournalRatelimitBurst 5000
+
 #$ModLoad imklog   # provides kernel logging support (previously done by rklogd)
 #$ModLoad immark  # provides --MARK-- message capability
 
