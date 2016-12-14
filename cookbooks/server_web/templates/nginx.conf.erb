@@ -5,27 +5,30 @@ server {
   client_max_body_size 50M;
 
   passenger_enabled on;
-  <%# Envars may need to be added to crontab.erb %>
-  passenger_env_var RAILS_ENV <%= node.chef_environment %>;
-  passenger_env_var SECRET_KEY_BASE <%= @devise_secret %>;
-  passenger_env_var WEB_DOMAIN <%= node.app.server_name %>;
-  passenger_env_var WEB_PROTOCOL <%= node.app.server_protocol %>;
-  passenger_env_var SMTP_USER <%= node.app.smtp_user %>;
-  passenger_env_var SMTP_PASSWORD <%= @smtp_password %>;
-  passenger_env_var MAIL_FROM <%= node.app.mail_from %>;
-  passenger_env_var YELP_CONSUMER_KEY <%= @yelp['consumer_key'] %>;
-  passenger_env_var YELP_CONSUMER_SECRET <%= @yelp['consumer_secret'] %>;
-  passenger_env_var YELP_TOKEN <%= @yelp['token'] %>;
-  passenger_env_var YELP_TOKEN_SECRET <%= @yelp['token_secret'] %>;
-  passenger_env_var ROOT_EMAIL <%= node.app.root_email %>;
-  passenger_env_var ROOT_PASSWORD <%= @root_password %>;
-  passenger_env_var PERMDIR <%= node.nfs.client.mount %>;
-  passenger_env_var NODENAME <%= node.fqdn %>;
-  passenger_env_var SOURCE_REVISION <%= @source_revision %>;
-  passenger_env_var FTS_TARGET <%= node.app.full_text_search_target %>;
-  passenger_env_var RUBY_GC_MALLOC_LIMIT_MAX <%= node.rails.gc_max_newspace %>;
-  passenger_env_var RUBY_GC_OLDMALLOC_LIMIT_MAX <%= node.rails.gc_max_oldspace %>;
-  passenger_env_var TWILIO_NUMBER <%= @twilio['number'] %>;
-  passenger_env_var TWILIO_ACCOUNT <%= @twilio['account'] %>;
-  passenger_env_var TWILIO_AUTH <%= @twilio['auth'] %>;
+
+  <%# When adding envars, consider also adding to crontab.erb %>
+
+  passenger_env_var RAILS_ENV "<%= node.chef_environment %>";
+  passenger_env_var SECRET_KEY_BASE "<%= @devise_secret %>";
+  passenger_env_var WEB_DOMAIN "<%= node.app.server_name %>";
+  passenger_env_var WEB_PROTOCOL "<%= node.app.server_protocol %>";
+  passenger_env_var SMTP_USER "<%= node.app.smtp_user %>";
+  passenger_env_var SMTP_PASSWORD "<%= @smtp_password %>";
+  passenger_env_var MAIL_FROM "<%= node.app.mail_from %>";
+  passenger_env_var YELP_CONSUMER_KEY "<%= @yelp['consumer_key'] %>";
+  passenger_env_var YELP_CONSUMER_SECRET "<%= @yelp['consumer_secret'] %>";
+  passenger_env_var YELP_TOKEN "<%= @yelp['token'] %>";
+  passenger_env_var YELP_TOKEN_SECRET "<%= @yelp['token_secret'] %>";
+  passenger_env_var ROOT_EMAIL "<%= node.app.root_email %>";
+  passenger_env_var ROOT_PASSWORD "<%= @root_password %>";
+  passenger_env_var PERMDIR "<%= node.nfs.client.mount %>";
+  passenger_env_var NODENAME "<%= node.fqdn %>";
+  passenger_env_var SOURCE_REVISION "<%= @source_revision %>";
+  passenger_env_var FTS_TARGET "<%= node.app.full_text_search_target %>";
+  passenger_env_var RUBY_GC_MALLOC_LIMIT_MAX "<%= node.rails.gc_max_newspace %>";
+  passenger_env_var RUBY_GC_OLDMALLOC_LIMIT_MAX "<%= node.rails.gc_max_oldspace %>";
+  passenger_env_var TWILIO_NUMBER "<%= @twilio['number'] %>";
+  passenger_env_var TWILIO_ACCOUNT "<%= @twilio['account'] %>";
+  passenger_env_var TWILIO_AUTH "<%= @twilio['auth'] %>";
+  passenger_env_var TRUSTED_CLIENTS "<%= @web_servers.map{|web_server| web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") }.join(";") %>";
 }

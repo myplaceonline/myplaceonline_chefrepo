@@ -56,7 +56,8 @@ template "#{node.nginx.dir}/sites-available/#{node.app.name}.conf" do
     :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
     :yelp => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["yelp"],
     :twilio => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["twilio"],
-    :source_revision => %x{git --git-dir #{node.web.dir}/.git/ rev-parse HEAD}.strip
+    :source_revision => %x{git --git-dir #{node.web.dir}/.git/ rev-parse HEAD}.strip,
+    :web_servers => search(:node, "chef_environment:#{node.chef_environment} AND role:web_server"),
   })
 end
 
