@@ -27,6 +27,10 @@ service "elasticsearch" do
   action [:enable, :start]
 end
 
+template "/etc/logstash/logstash.yml" do
+  source "logstash.yml.erb"
+end
+
 template "/etc/logstash/jvm.options" do
   source "logstash_jvm.options.erb"
   notifies :restart, "service[logstash]", :immediately
