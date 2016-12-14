@@ -28,12 +28,10 @@ end
 
 file "/usr/local/share/gems/gems/passenger-#{node.nginx.passenger.version}/bin/passenger_status.sh" do
   content %Q{#!/bin/sh
-PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/passenger-instreg/ /usr/local/share/gems/gems/passenger-#{node.nginx.passenger.version}/bin/passenger-status -v --show=xml
+PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/ /usr/local/share/gems/gems/passenger-#{node.nginx.passenger.version}/bin/passenger-status -v --show=xml
 }
   mode '0755'
 end
-
-directory "/var/run/passenger-instreg"
 
 template "/etc/nginx/conf.d/passenger.conf" do
   source "passenger.conf.erb"
