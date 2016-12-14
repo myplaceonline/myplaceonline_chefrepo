@@ -1,0 +1,14 @@
+[Unit]
+Description=myplaceonline-delayedjobs
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=<%= node.web.dir %>
+
+Environment="FTS_TARGET=<%= node.app.full_text_search_target %>" "RUBY_GC_MALLOC_LIMIT_MAX=<%= node.rails.gc_max_newspace %>" "RUBY_GC_OLDMALLOC_LIMIT_MAX=<%= node.rails.gc_max_oldspace %>" "RAILS_ENV=<%= node.chef_environment %>" "SECRET_KEY_BASE=<%= @devise_secret %>" "ROOT_EMAIL=<%= node.app.root_email %>" "ROOT_PASSWORD=<%= @root_password %>" "WEB_DOMAIN=<%= node.app.server_name %>" "WEB_PROTOCOL=<%= node.app.server_protocol %>" "SMTP_USER=<%= node.app.smtp_user %>" "SMTP_PASSWORD=<%= @smtp_password %>" "MAIL_FROM=<%= node.app.mail_from %>" "PERMDIR=<%= node.nfs.client.mount %>" "TWILIO_NUMBER=<%= @twilio['number'] %>" "TWILIO_ACCOUNT=<%= @twilio['account'] %>" "TWILIO_AUTH=<%= @twilio['auth'] %>"
+
+ExecStart=<%= node.web.dir %>/bin/delayed_job run -n 1
+
+[Install]
+WantedBy=multi-user.target

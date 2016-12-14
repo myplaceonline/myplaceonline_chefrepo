@@ -170,6 +170,30 @@ template "/var/spool/cron/root" do
   })
 end
 
+execute "reload-myplaceonline-delayedjobs" do
+  command %{
+    systemctl daemon-reload;
+    systemctl enable myplaceonline-delayedjobs;
+  }
+  action :nothing
+end
+
+template "/etc/systemd/system/myplaceonline-delayedjobs.service" do
+  source "myplaceonline-delayedjobs.service.erb"
+  variables ({
+    :devise_secret => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["devise_secret"],
+    :root_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["app"]["root_password"],
+    :smtp_password => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["smtp_password"],
+    :twilio => data_bag_item("globalsecrets", "globalsecrets", IO.read(data_bag_item("server", "server")["secrets_dir"] + "secret_key_databag_globalsecrets"))["passwords"]["twilio"],
+  })
+  notifies :run, "execute[reload-myplaceonline-delayedjobs]", :immediately
+end
+
+# Always restart the job to pick up the latest rails source code
+execute "restart-myplaceonline-delayedjobs" do
+  command "systemctl restart myplaceonline-delayedjobs"
+end
+
 service "nginx" do
   action "start"
 end
