@@ -87,6 +87,23 @@ template "/etc/sysctl.conf" do
   notifies :run, 'execute[reload-sysctl]', :immediately
 end
 
+execute "reload-myplaceonline-networkup" do
+  command %{
+    systemctl daemon-reload;
+    systemctl enable myplaceonline-networkup;
+  }
+  action :nothing
+end
+
+template "/etc/systemd/system/myplaceonline-networkup.service" do
+  source "myplaceonline-networkup.service.erb"
+  notifies :run, "execute[reload-myplaceonline-networkup]", :immediately
+end
+
+execute "restart-myplaceonline-networkup" do
+  command "systemctl restart myplaceonline-networkup"
+end
+
 execute "restart-journald" do
   command "systemctl restart systemd-journald"
   action :nothing

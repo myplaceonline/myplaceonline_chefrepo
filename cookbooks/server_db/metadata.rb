@@ -4,6 +4,6 @@ maintainer_email 'root@myplaceonline.com'
 license 'all_rights'
 description 'Installs/Configures server_db'
 long_description 'Installs/Configures server_db'
-version '0.1.81'
+version '0.1.82'
 
 depends "dnf"
