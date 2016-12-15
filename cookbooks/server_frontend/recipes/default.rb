@@ -49,7 +49,7 @@ template "/etc/cron.d/letsencrypt" do
   mode "0600"
 end
 
-template "/etc/rsyslog.d/haproxy.conf" do
+template "/etc/rsyslog.d/02-haproxy.conf" do
   source "rsyslog_haproxy.conf.erb"
   notifies :restart, "service[rsyslog]", :immediately
 end
