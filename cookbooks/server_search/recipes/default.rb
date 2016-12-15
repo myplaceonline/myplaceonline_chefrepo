@@ -42,7 +42,8 @@ template "/etc/logstash/conf.d/logstash.conf" do
 end
 
 service "logstash" do
-  action [:enable, :start]
+  action [:disable]
+#  action [:enable, :start]
 end
 
 template "/etc/rsyslog.conf" do
