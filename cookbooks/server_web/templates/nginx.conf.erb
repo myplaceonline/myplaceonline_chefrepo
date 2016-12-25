@@ -31,4 +31,8 @@ server {
   passenger_env_var TWILIO_ACCOUNT "<%= @twilio['account'] %>";
   passenger_env_var TWILIO_AUTH "<%= @twilio['auth'] %>";
   passenger_env_var TRUSTED_CLIENTS "<%= @web_servers.map{|web_server| web_server.fqdn.dup.insert(web_server.fqdn.index('.'), "-internal") }.join(";") %>";
+  
+  location /assets/ {
+    add_header Cache-Control "public, max-age=31536000";
+  }
 }

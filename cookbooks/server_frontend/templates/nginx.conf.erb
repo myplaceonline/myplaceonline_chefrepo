@@ -41,9 +41,12 @@ http {
         # Load configuration files for the default server block.
         include /etc/nginx/default.d/*.conf;
         
-        rewrite ^(.*)$ /maintenance.html break;
+        location = /google7e3498d30001c539.html {
+          root /usr/share/nginx/html;
+        }
 
         location / {
+          rewrite ^ /maintenance.html break;
         }
 
         error_page 404 /404.html;

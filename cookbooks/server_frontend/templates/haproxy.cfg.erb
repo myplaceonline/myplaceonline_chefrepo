@@ -79,12 +79,19 @@ listen internaladmin
 frontend myplaceonline
     bind *:80
     bind *:443 ssl crt /etc/haproxy/ssl/myplaceonline.com.pem
+    
     capture request header User-Agent len 128
     capture request header Referer len 128
     log-format             %ci:%cp\ [%t]\ %ft\ %b/%s\ %Tq/%Tw/%Tc/%Tr/%Tt\ %ST\ %B\ %U\ %ac/%fc/%bc/%sc/%rc\ %sq/%bq\ %{+Q}r\ %hr
+    
     redirect scheme https if !{ ssl_fc }
+    
     acl letsencrypt-request path_beg -i /.well-known/acme-challenge/
+    acl static_rule path_beg -i /google
+    
     use_backend letsencrypt if letsencrypt-request
+    use_backend static_backend if static_rule
+    
     default_backend             servers
 
 #---------------------------------------------------------------------
@@ -110,3 +117,6 @@ backend servers
 backend letsencrypt
     mode http
     server letsencrypt 127.0.0.1:9999
+
+backend static_backend
+    server static_server1 127.0.0.1:81
